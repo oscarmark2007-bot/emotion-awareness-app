@@ -83,135 +83,134 @@
   const WIZARD_STEPS = [
     {
       step: 1,
-      title: '事件',
-      field: 'event',
-      prompt: '發生了什麼事？客觀簡潔地記錄下來 (編號 1-12 之 1)',
-      render: renderStep1
+      title: '觸發點',
+      field: 'trigger',
+      prompt: '觸發我情緒的境、那一句話、動作或眼神是什麼？ (可選填，可直接點「略過」或「下一步」)',
+      render: renderStepTrigger
     },
     {
       step: 2,
-      title: '觸發點',
-      field: 'trigger',
-      prompt: '觸發我情緒的境、那一句話、動作或眼神是什麼？ (編號 1-12 之 2)',
-      render: renderStep2
+      title: '身體反應',
+      field: 'bodyReactions',
+      prompt: '察覺當下身體有什麼生理訊號與反應？可多選或新增 (可選填，可略過)',
+      render: renderStepBodyReactions
     },
     {
       step: 3,
-      title: '身體反應',
-      field: 'bodyReactions',
-      prompt: '察覺當下身體有什麼生理訊號與反應？可多選或新增 (編號 1-12 之 3)',
-      render: renderStep3
+      title: '心裡自然流露的話',
+      field: 'thoughts',
+      prompt: '腦海中第一時間冒出什麼自動化念頭？ (可選填，可略過)',
+      render: renderStepThoughts
     },
     {
       step: 4,
-      title: '心裡自然流露的話',
-      field: 'thoughts',
-      prompt: '腦海中第一時間冒出什麼自動化念頭？ (編號 1-12 之 4)',
-      render: renderStep4
+      title: '情緒類別',
+      field: 'emotions',
+      prompt: '辨認此時此刻心中湧起的情緒是什麼？可複選或新增 (可選填，可略過)',
+      render: renderStepEmotions
     },
     {
       step: 5,
-      title: '情緒類別',
-      field: 'emotions',
-      prompt: '辨認此時此刻心中湧起的情緒是什麼？可複選 (編號 1-12 之 5)',
-      render: renderStep5
+      title: '情緒指數',
+      field: 'emotionIntensity',
+      prompt: '針對選取的情緒設定 0~100 的強度指數 (可選填，可略過)',
+      render: renderStepEmotionIntensity
     },
     {
       step: 6,
-      title: '情緒指數',
-      field: 'emotionIntensity',
-      prompt: '針對剛才辨認出的每一種情緒，給予 0~100 的強度指數 (編號 1-12 之 6)',
-      render: renderStep6
+      title: '情緒落地',
+      field: 'grounding',
+      prompt: '採用了哪種身體或威儀動作來幫助情緒落地？ (可選填，可略過)',
+      render: renderStepGrounding
     },
     {
       step: 7,
-      title: '情緒落地',
-      field: 'grounding',
-      prompt: '採用了哪種身體或威儀動作來幫助情緒落地？ (編號 1-12 之 7)',
-      render: renderStep7
+      title: '情緒落地時機',
+      field: 'timing',
+      prompt: '是在境界當下立即做落地動作，還是事後才做？ (可選填，可略過)',
+      render: renderStepTiming
     },
     {
       step: 8,
-      title: '情緒落地時機',
-      field: 'timing',
-      prompt: '是在境界當下立即做落地動作，還是事後才做？ (編號 1-12 之 8)',
-      render: renderStep8
+      title: '落地後情緒指數',
+      field: 'postScore',
+      prompt: '落地之後，情緒指數舒緩到多少？ (可選填，可略過)',
+      render: renderStepPostScore
     },
     {
       step: 9,
-      title: '落地後情緒指數',
-      field: 'postScore',
-      prompt: '落地之後，情緒指數舒緩到多少？ (編號 1-12 之 9)',
-      render: renderStep9
+      title: '好像的事實',
+      field: 'seemedFact',
+      prompt: '當時我的杏仁核腦補、以為的事實是什麼？ (可選填，可略過)',
+      render: renderStepSeemedFact
     },
     {
       step: 10,
-      title: '好像的事實',
-      field: 'seemedFact',
-      prompt: '當時我的杏仁核腦補、以為的事實是什麼？ (編號 1-12 之 10)',
-      render: renderStep10
+      title: '確立的事實',
+      field: 'realFact',
+      prompt: '冷靜查證後，真正的客觀真相是什麼？ (可選填，可略過)',
+      render: renderStepRealFact
     },
     {
       step: 11,
-      title: '確立的事實',
-      field: 'realFact',
-      prompt: '冷靜查證後，真正的客觀真相是什麼？ (編號 1-12 之 11)',
-      render: renderStep11
+      title: '事件發生的時間與事件經過',
+      field: 'event',
+      prompt: '回顧整起事件具體發生的時間與客觀經過 (放最後回顧，可選填，可略過)',
+      render: renderStepEvent
     },
     {
       step: 12,
       title: '今日評價',
       field: 'reflection',
-      prompt: '給自己的自我肯定、觀功念恩與學習收穫 (編號 1-12 之 12)',
-      render: renderStep12
+      prompt: '給自己的自我肯定、觀功念恩與學習收穫 (可選填，可略過，點完成儲存)',
+      render: renderStepReflection
     }
   ];
 
   // 4. Wizard Step Rendering Functions
-  function renderStep1(container) {
-    container.innerHTML = `
-      <div style="margin-bottom: 12px;">
-        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">📅 記錄時間</label>
-        <input type="datetime-local" id="wiz-time" class="neumo-input" value="${state.draft.createdAt}">
-      </div>
-      <div>
-        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">📝 事件描述 (客觀發生)</label>
-        <textarea id="wiz-event" class="neumo-textarea" placeholder="例如：今天早上準備出門時，小孩還在慢條斯理吃早餐...">${escapeHtml(state.draft.event)}</textarea>
-      </div>
-    `;
-    const timeInput = container.querySelector('#wiz-time');
-    const eventInput = container.querySelector('#wiz-event');
-    timeInput.addEventListener('change', () => { state.draft.createdAt = timeInput.value; });
-    eventInput.addEventListener('input', () => { state.draft.event = eventInput.value; });
-  }
-
-  function renderStep2(container) {
+  function renderStepTrigger(container) {
     container.innerHTML = `
       <div>
-        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">⚡ 境界與觸發點</label>
-        <textarea id="wiz-trigger" class="neumo-textarea" style="min-height: 140px;" placeholder="例如：看到時鐘指向 8:15、孩子說了一句「我今天不想去學校」...">${escapeHtml(state.draft.trigger)}</textarea>
+        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">⚡ 境界與觸發點 (可選填，可直接點略過)</label>
+        <textarea id="wiz-trigger" class="neumo-textarea" style="min-height: 140px;" placeholder="例如：看到時鐘指向 8:15、對方說了一句「這份報告不太對」...">${escapeHtml(state.draft.trigger)}</textarea>
       </div>
     `;
     const triggerInput = container.querySelector('#wiz-trigger');
     triggerInput.addEventListener('input', () => { state.draft.trigger = triggerInput.value; });
   }
 
-  function renderStep3(container) {
-    renderTagCloudStep(container, 'bodyReactions', '身體反應', '輸入身體反應，例如：胸悶');
+  function renderStepBodyReactions(container) {
+    renderTagCloudStep(container, 'bodyReactions', '身體反應', '輸入身體反應，例如：胸悶 (可選填，可略過)');
   }
 
-  function renderStep4(container) {
-    renderTagCloudStep(container, 'thoughts', '心裡自然流露的話', '輸入心裡流露的話，例如：快遲到了！');
+  function renderStepThoughts(container) {
+    renderTagCloudStep(container, 'thoughts', '心裡自然流露的話', '輸入心裡流露的話，例如：快遲到了！ (可選填，可略過)');
   }
 
-  function renderStep5(container) {
-    renderTagCloudStep(container, 'emotions', '情緒類別', '輸入情緒，例如：焦慮、擔心');
+  function renderStepEmotions(container) {
+    renderTagCloudStep(container, 'emotions', '情緒類別', '輸入情緒，例如：焦慮、擔心 (可選填，可略過)');
   }
 
-  function renderStep6(container) {
-    // If no emotions selected in step 5, encourage selection or provide defaults
+  function renderStepEmotionIntensity(container) {
     if (!state.draft.emotions || state.draft.emotions.length === 0) {
-      state.draft.emotions = [{ name: '擔心', score: 85 }];
+      container.innerHTML = `
+        <div style="background: #f8f6fc; border-radius: var(--radius-lg); padding: 24px 18px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border-light);">
+          <p style="font-size: 14.5px; color: #5a547a; font-weight: 500; margin-bottom: 10px;">前一步未選取情緒類別，您可以直接點選下方<b>「略過」</b>或<b>「下一步」</b>繼續前進。</p>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">若想在此直接新增情緒並調整指數，請點擊下方按鈕：</p>
+          <button id="btn-add-quick-emo" class="record-action-btn" style="margin: 0 auto; padding: 8px 18px; border-color: var(--primary); color: var(--primary);">+ 自訂情緒指數滑桿</button>
+        </div>
+      `;
+      const addBtn = container.querySelector('#btn-add-quick-emo');
+      if (addBtn) {
+        addBtn.addEventListener('click', () => {
+          const name = prompt('請輸入情緒名稱（例如：緊張、壓力）：');
+          if (name && name.trim()) {
+            state.draft.emotions.push({ name: name.trim(), score: 75 });
+            renderStepEmotionIntensity(container);
+          }
+        });
+      }
+      return;
     }
 
     let cardsHtml = '';
@@ -232,7 +231,7 @@
         ${cardsHtml}
       </div>
       <div style="font-size: 13px; color: var(--text-sub); text-align: center;">
-        滑動滑桿以調整每種情緒的強度 (0 最輕微 ~ 100 最強烈)
+        滑動滑桿以調整每種情緒的強度 (0 最輕微 ~ 100 最強烈，亦可略過)
       </div>
     `;
 
@@ -247,16 +246,16 @@
     });
   }
 
-  function renderStep7(container) {
-    renderTagCloudStep(container, 'grounding', '情緒落地方式', '輸入落地方式，例如：深呼吸、拔草');
+  function renderStepGrounding(container) {
+    renderTagCloudStep(container, 'grounding', '情緒落地方式', '輸入落地方式，例如：深呼吸、拔草 (可選填，可略過)');
   }
 
-  function renderStep8(container) {
+  function renderStepTiming(container) {
     const current = state.draft.timing || '當下';
     container.innerHTML = `
       <div style="text-align: center; margin-bottom: 16px;">
         <p style="font-size: 14.5px; color: var(--text-main); font-weight: 500;">
-          您是在境界發生的當下立即做了情緒落地，還是事後才覺察並落地？
+          您是在境界發生的當下立即做了情緒落地，還是事後才覺察並落地？(可選填，可略過)
         </p>
       </div>
       <div class="choice-pill-group">
@@ -275,7 +274,7 @@
     });
   }
 
-  function renderStep9(container) {
+  function renderStepPostScore(container) {
     const initialMaxScore = state.draft.emotions && state.draft.emotions.length > 0 
       ? Math.max(...state.draft.emotions.map(e => e.score || 50)) 
       : 80;
@@ -291,7 +290,7 @@
       </div>
 
       <div style="background: var(--surface-card); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-neumo-sm); text-align: center;">
-        <div style="font-size: 13.5px; color: var(--text-sub);">落地前後情緒舒緩對比</div>
+        <div style="font-size: 13.5px; color: var(--text-sub);">落地前後情緒舒緩對比 (可略過)</div>
         <div style="font-size: 18px; font-weight: 700; color: var(--primary); margin-top: 6px;" id="relief-diff-text">
           原始最高: ${initialMaxScore}分 → 落地後: ${postVal}分 (舒緩 ${Math.max(0, initialMaxScore - postVal)}分)
         </div>
@@ -309,23 +308,23 @@
     });
   }
 
-  function renderStep10(container) {
+  function renderStepSeemedFact(container) {
     container.innerHTML = `
       <div>
-        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">🌫️ 好像的事實 (假相 / 腦補)</label>
-        <textarea id="wiz-seemed" class="neumo-textarea" style="min-height: 140px;" placeholder="例如：我以為他是故意跟我作對、他一定看我不順眼、一切都完蛋了...">${escapeHtml(state.draft.seemedFact)}</textarea>
+        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">🌫️ 好像的事實 (假相 / 腦補，可選填，可略過)</label>
+        <textarea id="wiz-seemed" class="neumo-textarea" style="min-height: 140px;" placeholder="例如：我以為他是故意針對我、事情絕對完蛋了...">${escapeHtml(state.draft.seemedFact)}</textarea>
       </div>
     `;
     const textarea = container.querySelector('#wiz-seemed');
     textarea.addEventListener('input', () => { state.draft.seemedFact = textarea.value; });
   }
 
-  function renderStep11(container) {
+  function renderStepRealFact(container) {
     const curEval = state.draft.factEvaluation || '完全錯誤';
     container.innerHTML = `
       <div style="margin-bottom: 16px;">
-        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">☀️ 確立的事實 (客觀真相)</label>
-        <textarea id="wiz-real" class="neumo-textarea" style="min-height: 100px;" placeholder="例如：客觀事實是他昨天熬夜不舒服所以沒吃完，並不是針對我...">${escapeHtml(state.draft.realFact)}</textarea>
+        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">☀️ 確立的事實 (客觀真相，可選填，可略過)</label>
+        <textarea id="wiz-real" class="neumo-textarea" style="min-height: 100px;" placeholder="例如：冷靜查證發現只是誤會，對方沒有惡意...">${escapeHtml(state.draft.realFact)}</textarea>
       </div>
 
       <div>
@@ -350,14 +349,31 @@
     });
   }
 
-  function renderStep12(container) {
+  function renderStepEvent(container) {
+    container.innerHTML = `
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">📅 事件發生時間</label>
+        <input type="datetime-local" id="wiz-time" class="neumo-input" value="${state.draft.createdAt}">
+      </div>
+      <div>
+        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">📝 事件具體經過與客觀背景 (放最後回顧，可選填，可略過)</label>
+        <textarea id="wiz-event" class="neumo-textarea" placeholder="回顧整起事件具體發生了什麼事... (可選填，亦可直接點下一步略過)">${escapeHtml(state.draft.event)}</textarea>
+      </div>
+    `;
+    const timeInput = container.querySelector('#wiz-time');
+    const eventInput = container.querySelector('#wiz-event');
+    timeInput.addEventListener('change', () => { state.draft.createdAt = timeInput.value; });
+    eventInput.addEventListener('input', () => { state.draft.event = eventInput.value; });
+  }
+
+  function renderStepReflection(container) {
     container.innerHTML = `
       <div>
-        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">🌟 今日評價 (自我肯定、觀功念恩、學習收穫)</label>
-        <textarea id="wiz-reflection" class="neumo-textarea" style="min-height: 150px;" placeholder="例如：讚嘆自己今天有察覺到皺眉與心跳加快，而且及時深呼吸落地！看到事實真相後心情放鬆很多...">${escapeHtml(state.draft.reflection)}</textarea>
+        <label style="font-size: 13px; font-weight: 600; color: #5a557b; display: block; margin-bottom: 6px;">🌟 今日評價 (自我肯定、觀功念恩、學習收穫，可選填)</label>
+        <textarea id="wiz-reflection" class="neumo-textarea" style="min-height: 140px;" placeholder="例如：讚嘆自己今天在境界當下有及時察覺身心反應，並做深呼吸落地！看到事實真相後放下很多，肯定自己的進步...">${escapeHtml(state.draft.reflection)}</textarea>
       </div>
       <div style="margin-top: 16px; padding: 12px; background: #f0eefa; border-radius: var(--radius-md); font-size: 13px; color: #574b90; text-align: center;">
-        🎉 太棒了！您已完成情緒觀察表的全部 12 個欄位，點擊下方「完成儲存」即可永久儲存至硬碟。
+        🎉 太棒了！您已走完情緒觀察表覺察流程，點擊下方「完成儲存」即可永久儲存至硬碟。
       </div>
     `;
     const textarea = container.querySelector('#wiz-reflection');
@@ -992,6 +1008,9 @@
 
     // Update Date Range Display label
     updateDateRangeLabel();
+
+    // Generate Weekly / Monthly / Quarterly / Annual Summary Report
+    generateSummaryReport(filteredRecords, learningDays, sheetsPerDay, bodyCount, thoughtsCount, emotionsCount, strongestEmoBox.innerText, timingDownCount, timingAfterCount, timingTotal, bestGrounding, bestAvgRelief, bestCount, factErrorCount, factEvaluatedCount);
   }
 
   function renderTopRankList(containerId, countMap, unit) {
@@ -1034,6 +1053,18 @@
       } else if (period === 'last_month') {
         const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         return rDate.getFullYear() === lastMonthDate.getFullYear() && rDate.getMonth() === lastMonthDate.getMonth();
+      } else if (period === 'quarter') {
+        const qStartMonth = Math.floor(now.getMonth() / 3) * 3;
+        const qStart = new Date(now.getFullYear(), qStartMonth, 1, 0, 0, 0);
+        const qEnd = new Date(now.getFullYear(), qStartMonth + 3, 0, 23, 59, 59, 999);
+        return rDate >= qStart && rDate <= qEnd;
+      } else if (period === 'last_quarter') {
+        const lastQStartMonth = Math.floor(now.getMonth() / 3) * 3 - 3;
+        const lastQYear = lastQStartMonth < 0 ? now.getFullYear() - 1 : now.getFullYear();
+        const normStartMonth = (lastQStartMonth + 12) % 12;
+        const qStart = new Date(lastQYear, normStartMonth, 1, 0, 0, 0);
+        const qEnd = new Date(lastQYear, normStartMonth + 3, 0, 23, 59, 59, 999);
+        return rDate >= qStart && rDate <= qEnd;
       } else if (period === 'year') {
         return rDate.getFullYear() === now.getFullYear();
       } else if (period === 'last_year') {
@@ -1049,6 +1080,70 @@
       }
       return true;
     });
+  }
+
+
+  // Generate Weekly / Monthly / Quarterly / Annual Heart Awareness Summary
+  let currentSummaryTextToCopy = '';
+
+  function generateSummaryReport(filteredRecords, learningDays, sheetsPerDay, bodyCount, thoughtsCount, emotionsCount, strongestEmoText, timingDownCount, timingAfterCount, timingTotal, bestGrounding, bestAvgRelief, bestCount, factErrorCount, factEvaluatedCount) {
+    const titleEl = document.getElementById('summary-report-title');
+    const bodyEl = document.getElementById('summary-report-body');
+    if (!titleEl || !bodyEl) return;
+
+    const now = new Date();
+    const period = state.statsPeriod;
+    let periodName = '本週';
+    if (period === 'week') periodName = '本週';
+    else if (period === 'last_week') periodName = '上週';
+    else if (period === 'month') periodName = `${now.getMonth() + 1}月份`;
+    else if (period === 'last_month') periodName = '上月份';
+    else if (period === 'quarter') periodName = `${now.getFullYear()}年 第${Math.floor(now.getMonth() / 3) + 1}季`;
+    else if (period === 'last_quarter') periodName = '上一季度';
+    else if (period === 'year') periodName = `${now.getFullYear()}年度`;
+    else if (period === 'last_year') periodName = `${now.getFullYear() - 1}年度`;
+    else if (period === 'all') periodName = '歷程全覽';
+    else if (period === 'custom') periodName = '自訂區間';
+
+    titleEl.innerText = `📋 ${periodName}心靈覺察總結報告`;
+
+    if (filteredRecords.length === 0) {
+      bodyEl.innerHTML = `<div style="color:var(--text-muted); font-size:13.5px; padding:10px 0;">本期間尚未填寫情緒觀察表。面對境界時，練習隨時打開 App 記錄身心反應與落地，讓覺察不斷線！</div>`;
+      currentSummaryTextToCopy = `【${periodName}心靈覺察總結】本期間尚未填寫記錄，持續練習讓覺察不斷線！`;
+      return;
+    }
+
+    const topBody = Object.entries(bodyCount).sort((a,b)=>b[1]-a[1])[0];
+    const topThought = Object.entries(thoughtsCount).sort((a,b)=>b[1]-a[1])[0];
+    const totalEmoMentions = Object.values(emotionsCount).reduce((a,b)=>a+b, 0);
+    const topEmo = Object.entries(emotionsCount).sort((a,b)=>b[1]-a[1])[0];
+    const topEmoPct = topEmo && totalEmoMentions > 0 ? Math.round((topEmo[1] / totalEmoMentions) * 100) : 0;
+    const timingDownPct = timingTotal > 0 ? Math.round((timingDownCount / timingTotal) * 100) : 0;
+    const falseRatioPct = factEvaluatedCount > 0 ? Math.round((factErrorCount / factEvaluatedCount) * 100) : 0;
+
+    const html = `
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div><b>📈 保溫實修進度：</b>本期間共記錄了 <span style="color:var(--primary); font-weight:700;">${filteredRecords.length} 張</span> 情緒觀察表（平均每日 ${sheetsPerDay} 張），持續保溫不間斷！</div>
+        <div><b>🧘 身心生理慣性：</b>面對境界時，身體最常出現的預警訊號是「<span style="color:#d9534f; font-weight:600;">${topBody ? topBody[0] : '無'}</span>」，大腦第一時間浮現的自動念頭是「<span style="color:#e67e22; font-weight:600;">${topThought ? topThought[0] : '無'}</span>」。</div>
+        <div><b>💜 情緒光譜輪廓：</b>主要湧現的情緒為「<span style="color:var(--primary); font-weight:700;">${topEmo ? topEmo[0] : '無'}</span> (佔 ${topEmoPct}%)」，最強烈的情緒表現為 ${escapeHtml(strongestEmoText)}。</div>
+        <div><b>🌱 落地轉化成效：</b>在面臨境界時，有 <span style="color:#2e7d32; font-weight:700;">${timingDownPct}%</span> 能做到「當下立即落地」！其中以「<span style="color:#2e7d32; font-weight:600;">${bestGrounding || '深呼吸'}</span>」最為有效，平均幫心靈舒緩了 ${bestAvgRelief > 0 ? Math.round(bestAvgRelief) : 0} 分情緒張力。</div>
+        <div><b>☀️ 假相超越與真相：</b>經查證後，高達 <span style="color:#d9534f; font-weight:700;">${falseRatioPct}%</span> 的「好像的事實」證實只是大腦杏仁核的假相腦補，成功從情緒漩渦中看見客觀事實真相！</div>
+        <div style="margin-top:6px; padding:10px; background:#f0eefa; border-radius:10px; font-size:13px; color:#524785;">
+          💬 <b>上師實修叮嚀：</b>「核心：不要求做得很多，而是『不要斷』，變成習慣。練久了，面對境界時，就能更絲滑地流水線走完：<b>辨認 ➔ 落地 ➔ 再看真相</b>！」
+        </div>
+      </div>
+    `;
+
+    bodyEl.innerHTML = html;
+
+    currentSummaryTextToCopy = `【2026 PEI ${periodName}心靈覺察總結報告】
+📈 保溫實修：本期間填寫 ${filteredRecords.length} 張觀察表 (日均 ${sheetsPerDay} 張)
+🧘 身心慣性：身體最常出現「${topBody ? topBody[0] : '無'}」，心裡最常流露「${topThought ? topThought[0] : '無'}」
+💜 情緒分佈：核心情緒為「${topEmo ? topEmo[0] : '無'} (佔 ${topEmoPct}%)」，最強烈為 ${strongestEmoText}
+🌱 落地轉化：當下落地率達 ${timingDownPct}%，以「${bestGrounding || '深呼吸'}」最為有效 (舒緩約 ${bestAvgRelief > 0 ? Math.round(bestAvgRelief) : 0}分)
+☀️ 假相超越：好像的事實錯誤率達 ${falseRatioPct}%，成功識破杏仁核假相，看見客觀真相！
+---
+由「情緒觀察表 App」記錄與自主備份`;
   }
 
   function updateDateRangeLabel() {
@@ -1413,6 +1508,20 @@
     // Wizard Bottom Nav
     document.getElementById('btn-wizard-next').addEventListener('click', wizardNext);
     document.getElementById('btn-wizard-prev').addEventListener('click', wizardPrev);
+    const skipBtn = document.getElementById('btn-wizard-skip');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', wizardNext);
+    }
+
+    // Copy Summary Report
+    const copySummaryBtn = document.getElementById('btn-copy-summary');
+    if (copySummaryBtn) {
+      copySummaryBtn.addEventListener('click', () => {
+        if (currentSummaryTextToCopy) {
+          copyToClipboard(currentSummaryTextToCopy);
+        }
+      });
+    }
 
     // Quick Form Save
     document.getElementById('btn-quick-save').addEventListener('click', () => {

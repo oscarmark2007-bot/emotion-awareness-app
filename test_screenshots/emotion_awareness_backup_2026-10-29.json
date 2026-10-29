@@ -1,0 +1,687 @@
+{
+  "version": "1.0",
+  "exportedAt": "2026-10-29T13:36:41.053Z",
+  "startDate": "2025-12-15",
+  "tags": {
+    "bodyReactions": [
+      "肩膀沉重",
+      "抿嘴",
+      "皺眉",
+      "倒吸一口氣",
+      "嘆氣",
+      "呼吸不穩",
+      "呼吸急促",
+      "胃緊縮",
+      "虛脫",
+      "大叫",
+      "喉痛",
+      "頭暈",
+      "肩膀緊繃",
+      "胃痛",
+      "胸悶",
+      "心跳加快",
+      "咬牙",
+      "手心冒汗",
+      "手抖",
+      "四肢無力",
+      "背部緊繃"
+    ],
+    "thoughts": [
+      "啊！",
+      "什麼？",
+      "快遲到了！",
+      "你在說什麼？",
+      "好緊張",
+      "好的",
+      "氣死人了！",
+      "搞什麼！",
+      "抱歉",
+      "我要乖一點...",
+      "好吧",
+      "反正就這樣",
+      "憑什麼！",
+      "怎麼會這樣",
+      "糟糕",
+      "完了",
+      "好煩",
+      "算了吧",
+      "為什麼是我？"
+    ],
+    "emotions": [
+      "訝異",
+      "擔心",
+      "疲累",
+      "驚嚇",
+      "難過",
+      "壓力",
+      "懊悔",
+      "憂傷",
+      "緊張",
+      "煩躁",
+      "徬徨",
+      "傻眼",
+      "傷感",
+      "焦慮",
+      "無奈",
+      "悲傷",
+      "崩潰",
+      "挫折",
+      "恐懼",
+      "害怕",
+      "孤獨",
+      "不解",
+      "不喜",
+      "憤怒",
+      "委屈",
+      "自責",
+      "失望"
+    ],
+    "grounding": [
+      "按摩臉頰",
+      "敲胸",
+      "深呼吸",
+      "按摩腸胃",
+      "拔菜",
+      "拔草",
+      "行走",
+      "捏手指",
+      "摩頂",
+      "拍肩膀",
+      "腳踩大地",
+      "無",
+      "喝溫水",
+      "洗臉",
+      "伸展身體",
+      "閉眼靜坐",
+      "觀息"
+    ]
+  },
+  "records": [
+    {
+      "id": "sample_1",
+      "createdAt": "2026-10-19T11:30",
+      "event": "營隊第 1 天練習：日常境界覺察記錄 #1",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "疲累",
+          "score": 50
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "當下",
+      "postScore": 29,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_2",
+      "createdAt": "2026-10-19T16:30",
+      "event": "營隊第 1 天練習：日常境界覺察記錄 #2",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "疲累",
+          "score": 50
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "當下",
+      "postScore": 40,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_3",
+      "createdAt": "2026-10-19T21:30",
+      "event": "營隊第 1 天練習：日常境界覺察記錄 #3",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 86
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "當下",
+      "postScore": 41,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_4",
+      "createdAt": "2026-10-20T02:30",
+      "event": "營隊第 2 天練習：日常境界覺察記錄 #4",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "傻眼",
+          "score": 74
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "當下",
+      "postScore": 20,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_5",
+      "createdAt": "2026-10-20T07:30",
+      "event": "營隊第 2 天練習：日常境界覺察記錄 #5",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "不解",
+          "score": 88
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "當下",
+      "postScore": 23,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_6",
+      "createdAt": "2026-10-20T12:30",
+      "event": "營隊第 2 天練習：日常境界覺察記錄 #6",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 81
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 41,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_7",
+      "createdAt": "2026-10-20T17:30",
+      "event": "營隊第 3 天練習：日常境界覺察記錄 #7",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "傻眼",
+          "score": 65
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 31,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_8",
+      "createdAt": "2026-10-20T22:30",
+      "event": "營隊第 3 天練習：日常境界覺察記錄 #8",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴",
+        "倒吸一口氣"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "不解",
+          "score": 86
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 33,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_9",
+      "createdAt": "2026-10-21T03:30",
+      "event": "營隊第 3 天練習：日常境界覺察記錄 #9",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 94
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 38,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_10",
+      "createdAt": "2026-10-21T08:30",
+      "event": "營隊第 4 天練習：日常境界覺察記錄 #10",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉",
+        "抿嘴"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "傻眼",
+          "score": 77
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 22,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_11",
+      "createdAt": "2026-10-21T13:30",
+      "event": "營隊第 4 天練習：日常境界覺察記錄 #11",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉"
+      ],
+      "thoughts": [
+        "啊？"
+      ],
+      "emotions": [
+        {
+          "name": "不解",
+          "score": 71
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 41,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_12",
+      "createdAt": "2026-10-21T18:30",
+      "event": "營隊第 4 天練習：日常境界覺察記錄 #12",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉"
+      ],
+      "thoughts": [
+        "怎麼會這樣"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 83
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 20,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_13",
+      "createdAt": "2026-10-21T23:30",
+      "event": "營隊第 5 天練習：日常境界覺察記錄 #13",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉"
+      ],
+      "thoughts": [
+        "怎麼會這樣"
+      ],
+      "emotions": [
+        {
+          "name": "傻眼",
+          "score": 71
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 32,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_14",
+      "createdAt": "2026-10-22T04:30",
+      "event": "營隊第 5 天練習：日常境界覺察記錄 #14",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉"
+      ],
+      "thoughts": [
+        "怎麼會這樣"
+      ],
+      "emotions": [
+        {
+          "name": "不解",
+          "score": 94
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 38,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_15",
+      "createdAt": "2026-10-22T09:30",
+      "event": "營隊第 5 天練習：日常境界覺察記錄 #15",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "皺眉"
+      ],
+      "thoughts": [
+        "怎麼會這樣"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 66
+        }
+      ],
+      "grounding": [
+        "深呼吸"
+      ],
+      "timing": "事後",
+      "postScore": 22,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_16",
+      "createdAt": "2026-10-22T14:30",
+      "event": "營隊第 6 天練習：日常境界覺察記錄 #16",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "胸悶"
+      ],
+      "thoughts": [
+        "怎麼會這樣"
+      ],
+      "emotions": [
+        {
+          "name": "傻眼",
+          "score": 79
+        }
+      ],
+      "grounding": [
+        "敲胸"
+      ],
+      "timing": "未落地",
+      "postScore": 35,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_17",
+      "createdAt": "2026-10-22T19:30",
+      "event": "營隊第 6 天練習：日常境界覺察記錄 #17",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "胸悶"
+      ],
+      "thoughts": [
+        "怎麼會這樣"
+      ],
+      "emotions": [
+        {
+          "name": "不解",
+          "score": 73
+        }
+      ],
+      "grounding": [
+        "敲胸"
+      ],
+      "timing": "未落地",
+      "postScore": 42,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_18",
+      "createdAt": "2026-10-23T00:30",
+      "event": "營隊第 6 天練習：日常境界覺察記錄 #18",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "胸悶"
+      ],
+      "thoughts": [
+        "糟糕"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 69
+        }
+      ],
+      "grounding": [
+        "敲胸"
+      ],
+      "timing": "未落地",
+      "postScore": 42,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_19",
+      "createdAt": "2026-10-23T05:30",
+      "event": "營隊第 7 天練習：日常境界覺察記錄 #19",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "胸悶"
+      ],
+      "thoughts": [
+        "糟糕"
+      ],
+      "emotions": [
+        {
+          "name": "傻眼",
+          "score": 78
+        }
+      ],
+      "grounding": [
+        "敲胸"
+      ],
+      "timing": "未落地",
+      "postScore": 36,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "完全錯誤",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_20",
+      "createdAt": "2026-10-23T10:30",
+      "event": "營隊第 7 天練習：日常境界覺察記錄 #20",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "胸悶"
+      ],
+      "thoughts": [
+        "糟糕"
+      ],
+      "emotions": [
+        {
+          "name": "不解",
+          "score": 75
+        }
+      ],
+      "grounding": [
+        "按摩腸胃",
+        "腳踩大地"
+      ],
+      "timing": "未落地",
+      "postScore": 4,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "符合事實",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    },
+    {
+      "id": "sample_21",
+      "createdAt": "2026-10-23T15:30",
+      "event": "營隊第 7 天練習：日常境界覺察記錄 #21",
+      "trigger": "遇到突發境界，對方說了一句話觸發自動化反應",
+      "bodyReactions": [
+        "胸悶"
+      ],
+      "thoughts": [
+        "糟糕"
+      ],
+      "emotions": [
+        {
+          "name": "不喜",
+          "score": 80
+        }
+      ],
+      "grounding": [
+        "腳踩大地"
+      ],
+      "timing": "未落地",
+      "postScore": 20,
+      "seemedFact": "以為對方故意找麻煩或事情徹底搞砸了",
+      "realFact": "客觀查證發現大家只是趕時間，對方沒有惡意",
+      "factEvaluation": "符合事實",
+      "reflection": "今天及時做了深呼吸，有看見事實真相，給自己一個讚！"
+    }
+  ]
+}

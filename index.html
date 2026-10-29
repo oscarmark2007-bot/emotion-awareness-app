@@ -93,11 +93,15 @@
           <!-- Wizard Bottom Navigation -->
           <div class="wizard-nav-row">
             <button id="btn-wizard-prev" class="nav-pill-btn nav-prev-btn" title="上一步">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>上一步</span>
+            </button>
+            <button id="btn-wizard-skip" class="nav-pill-btn nav-skip-btn" title="略過此步驟不填，直接前進">
+              <span>略過</span>
             </button>
             <button id="btn-wizard-next" class="nav-pill-btn nav-next-btn">
               <span id="wizard-next-text">下一步</span>
-              <svg id="wizard-next-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              <svg id="wizard-next-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
           </div>
         </div>
@@ -109,45 +113,37 @@
             
             <div style="display:flex; flex-direction:column; gap:16px;">
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">1. 事件發生的時間與事件 (文字)</label>
-                <div style="display:flex; gap:8px; margin:6px 0;">
-                  <input type="datetime-local" id="quick-time" class="neumo-input" style="flex:1;">
-                </div>
-                <textarea id="quick-event" class="neumo-textarea" placeholder="發生了什麼事..."></textarea>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">1. 觸發點 (境 / 那一句話 / 眼神 / 動作)</label>
+                <textarea id="quick-trigger" class="neumo-textarea" style="min-height:75px;" placeholder="觸發情緒的點是... (可選填)"></textarea>
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">2. 觸發點 (境 / 那一句話 / 眼神 / 動作)</label>
-                <textarea id="quick-trigger" class="neumo-textarea" style="min-height:75px;" placeholder="觸發情緒的點是..."></textarea>
-              </div>
-
-              <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">3. 身體反應 (選單標籤)</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">2. 身體反應 (選單標籤)</label>
                 <div id="quick-body-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">4. 心裡自然流露的話 (選單標籤)</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">3. 心裡自然流露的話 (選單標籤)</label>
                 <div id="quick-thoughts-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">5. 情緒類別 (選單標籤)</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">4. 情緒類別 (選單標籤)</label>
                 <div id="quick-emotions-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
               </div>
 
               <div id="quick-intensity-box">
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">6. 情緒指數 (0~100)</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">5. 情緒指數 (0~100)</label>
                 <div id="quick-intensity-sliders" class="intensity-cards-list" style="margin-top:8px;"></div>
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">7. 情緒落地方式 (選單標籤)</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">6. 情緒落地方式 (選單標籤)</label>
                 <div id="quick-grounding-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">8. 情緒落地時機</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">7. 情緒落地時機</label>
                 <div class="choice-pill-group" id="quick-timing-choices">
                   <div class="choice-pill selected" data-val="當下">當下</div>
                   <div class="choice-pill" data-val="事後">事後</div>
@@ -156,7 +152,7 @@
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">9. 落地後情緒指數 (0~100)</label>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">8. 落地後情緒指數 (0~100)</label>
                 <div style="display:flex; align-items:center; gap:14px; margin-top:8px;">
                   <input type="range" min="0" max="100" id="quick-post-score" class="neumo-slider" value="30">
                   <span id="quick-post-score-val" class="intensity-badge">30</span>
@@ -164,13 +160,13 @@
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">10. 好像的事實 (假相 / 腦補)</label>
-                <textarea id="quick-seemed-fact" class="neumo-textarea" style="min-height:80px;" placeholder="當時我以為/認定的事實是..."></textarea>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">9. 好像的事實 (假相 / 腦補)</label>
+                <textarea id="quick-seemed-fact" class="neumo-textarea" style="min-height:80px;" placeholder="當時我以為/認定的事實是... (可選填)"></textarea>
               </div>
 
               <div>
-                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">11. 確立的事實 (真相 / 客觀事實)</label>
-                <textarea id="quick-real-fact" class="neumo-textarea" style="min-height:80px;" placeholder="冷靜查證後，真正的客觀真相是..."></textarea>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">10. 確立的事實 (真相 / 客觀事實)</label>
+                <textarea id="quick-real-fact" class="neumo-textarea" style="min-height:80px;" placeholder="冷靜查證後，真正的客觀真相是... (可選填)"></textarea>
                 <div style="margin-top:8px;">
                   <span style="font-size:12.5px; color:#787593;">「好像的事實」是否錯誤？</span>
                   <div class="choice-pill-group" id="quick-fact-error-choices">
@@ -182,8 +178,16 @@
               </div>
 
               <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">11. 事件發生的時間與事件經過 (放最後回顧)</label>
+                <div style="display:flex; gap:8px; margin:6px 0;">
+                  <input type="datetime-local" id="quick-time" class="neumo-input" style="flex:1;">
+                </div>
+                <textarea id="quick-event" class="neumo-textarea" placeholder="回顧整起事件客觀發生了什麼事... (可選填)"></textarea>
+              </div>
+
+              <div>
                 <label style="font-weight:600; font-size:13.5px; color:#5b567c;">12. 今日評價 (自我肯定 / 觀功念恩)</label>
-                <textarea id="quick-reflection" class="neumo-textarea" style="min-height:80px;" placeholder="對自己的肯定、溫柔呵護、看到的善意或學習..."></textarea>
+                <textarea id="quick-reflection" class="neumo-textarea" style="min-height:80px;" placeholder="對自己的肯定、溫柔呵護、看到的善意或學習... (可選填)"></textarea>
               </div>
 
               <button id="btn-quick-save" class="btn-primary" style="height:52px; font-size:16px;">
@@ -212,15 +216,17 @@
         </div>
       </section>
 
-      <!-- ================= TAB 3: 統計分析 (STATISTICS - Page 17 Exact Replica) ================= -->
+      <!-- ================= TAB 3: 統計分析 (STATISTICS - Page 17 Exact Replica + 週季月年總結) ================= -->
       <section id="tab-stats" class="tab-page" style="display: none;">
         <div class="stats-container">
-          <!-- Filter chips bar -->
+          <!-- Filter chips bar (支援 週 / 月 / 季 / 年 / 全部 / 自訂) -->
           <div class="stats-filter-bar">
             <div class="filter-chip active" data-period="week">本週</div>
             <div class="filter-chip" data-period="last_week">上週</div>
             <div class="filter-chip" data-period="month">本月</div>
             <div class="filter-chip" data-period="last_month">上個月</div>
+            <div class="filter-chip" data-period="quarter">本季</div>
+            <div class="filter-chip" data-period="last_quarter">上季</div>
             <div class="filter-chip" data-period="year">今年</div>
             <div class="filter-chip" data-period="last_year">去年</div>
             <div class="filter-chip" data-period="all">全部</div>
@@ -236,12 +242,27 @@
 
           <!-- Big Statistics Trigger Button -->
           <button id="btn-run-stats" class="btn-primary" style="width: 100%; height: 46px;">
-            統計
+            更新統計與總結
           </button>
 
           <!-- Current Range Date Label -->
           <div class="date-range-display" id="stats-date-label">
             2026/10/19 ~ 2026/10/24
+          </div>
+
+          <!-- 週/季/月/年 心靈覺察總結報告卡片 (New!) -->
+          <div class="stats-card" id="summary-report-card" style="background: linear-gradient(150deg, #ffffff 0%, #f7f5fd 100%); border: 1.5px solid #d9d4f7; text-align: left; padding: 18px 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(210, 205, 235, 0.6); padding-bottom: 8px;">
+              <h3 style="font-size: 16.5px; font-weight: 700; color: #433c6e;" id="summary-report-title">
+                📋 本週心靈覺察總結
+              </h3>
+              <button id="btn-copy-summary" class="record-action-btn" style="padding: 5px 12px; font-size: 12px; flex: initial;">
+                📤 複製總結
+              </button>
+            </div>
+            <div id="summary-report-body" style="font-size: 13.5px; line-height: 1.75; color: #4a456c;">
+              <!-- Dynamically generated weekly/monthly/quarterly/annual insight text -->
+            </div>
           </div>
 
           <!-- 1. 學習天數 -->
