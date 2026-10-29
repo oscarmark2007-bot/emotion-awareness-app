@@ -1040,6 +1040,9 @@
 
     // Generate Weekly / Monthly / Quarterly / Annual Summary Report
     generateSummaryReport(filteredRecords, learningDays, sheetsPerDay, bodyCount, thoughtsCount, emotionsCount, strongestEmoBox.innerText, timingDownCount, timingAfterCount, timingTotal, bestGrounding, bestAvgRelief, bestCount, factErrorCount, factEvaluatedCount);
+
+    // Render Emotion Line Chart
+    renderEmotionLineChart(filteredRecords);
   }
 
   function renderTopRankList(containerId, countMap, unit) {
@@ -1115,6 +1118,24 @@
   // Generate Weekly / Monthly / Quarterly / Annual Heart Awareness Summary
   let currentSummaryTextToCopy = '';
 
+  function saveCurrentPeriodWish() {
+    const input = document.getElementById('summary-period-wish');
+    if (!input) return;
+    const val = input.value.trim();
+    const savedWishes = JSON.parse(localStorage.getItem('ea_period_wishes') || '{}');
+    savedWishes[state.statsPeriod] = val;
+    savedWishes['global'] = val;
+    localStorage.setItem('ea_period_wishes', JSON.stringify(savedWishes));
+
+    const statusEl = document.getElementById('period-wish-status');
+    if (statusEl) {
+      statusEl.style.display = 'inline';
+      setTimeout(() => { statusEl.style.display = 'none'; }, 2500);
+    }
+    showToast('🌱 本期總結期許已儲存！');
+    calculateStatistics();
+  }
+
   function generateSummaryReport(filteredRecords, learningDays, sheetsPerDay, bodyCount, thoughtsCount, emotionsCount, strongestEmoText, timingDownCount, timingAfterCount, timingTotal, bestGrounding, bestAvgRelief, bestCount, factErrorCount, factEvaluatedCount) {
     const titleEl = document.getElementById('summary-report-title');
     const bodyEl = document.getElementById('summary-report-body');
@@ -1136,11 +1157,34 @@
 
     titleEl.innerText = `📋 ${periodName}心靈覺察總結報告`;
 
+    // Load saved wish for current period
+    const savedWishes = JSON.parse(localStorage.getItem('ea_period_wishes') || '{}');
+    const currentWish = savedWishes[period] || savedWishes['global'] || '';
+    const wishInput = document.getElementById('summary-period-wish');
+    if (wishInput && document.activeElement !== wishInput) {
+      wishInput.value = currentWish;
+    }
+
     if (filteredRecords.length === 0) {
       bodyEl.innerHTML = `<div style="color:var(--text-muted); font-size:13.5px; padding:10px 0;">本期間尚未填寫情緒觀察表。面對境界時，練習隨時打開 App 記錄身心反應與落地，讓覺察不斷線！</div>`;
-      currentSummaryTextToCopy = `【${periodName}心靈覺察總結】本期間尚未填寫記錄，持續練習讓覺察不斷線！`;
+      currentSummaryTextToCopy = `【${periodName}心靈覺察總結】\n${currentWish ? `🌱 本期總結期許：${currentWish}\n` : ''}本期間尚未填寫記錄，持續練習讓覺察不斷線！`;
       return;
     }
+
+    // Extract non-empty reflections (今日評價/自我對話與實修反思)
+    const reflectionRecords = filteredRecords
+      .filter(r => r.reflection && r.reflection.trim())
+      .map(r => {
+        const d = r.createdAt ? new Date(r.createdAt) : new Date();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mm = String(d.getMinutes()).padStart(2, '0');
+        return {
+          dateStr: `${m}/${day} ${hh}:${mm}`,
+          text: r.reflection.trim()
+        };
+      });
 
     const topBody = Object.entries(bodyCount).sort((a,b)=>b[1]-a[1])[0];
     const topThought = Object.entries(thoughtsCount).sort((a,b)=>b[1]-a[1])[0];
@@ -1157,6 +1201,25 @@
         <div><b>💜 情緒光譜輪廓：</b>主要湧現的情緒為「<span style="color:var(--primary); font-weight:700;">${topEmo ? topEmo[0] : '無'}</span> (佔 ${topEmoPct}%)」，最強烈的情緒表現為 ${escapeHtml(strongestEmoText)}。</div>
         <div><b>🌱 落地轉化成效：</b>在面臨境界時，有 <span style="color:#2e7d32; font-weight:700;">${timingDownPct}%</span> 能做到「當下立即落地」！其中以「<span style="color:#2e7d32; font-weight:600;">${bestGrounding || '深呼吸'}</span>」最為有效，平均幫心靈舒緩了 ${bestAvgRelief > 0 ? Math.round(bestAvgRelief) : 0} 分情緒張力。</div>
         <div><b>☀️ 假相超越與真相：</b>經查證後，高達 <span style="color:#d9534f; font-weight:700;">${falseRatioPct}%</span> 的「好像的事實」證實只是大腦杏仁核的假相腦補，成功從情緒漩渦中看見客觀事實真相！</div>
+
+        <!-- 1. 近期評價彙整 (New!) -->
+        <div style="margin-top:8px; padding-top:12px; border-top: 1px dashed rgba(190, 180, 230, 0.8);">
+          <div style="font-weight:700; color:#433c6e; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>📝 近期自我評價與實修反思彙整（共 ${reflectionRecords.length} 則）：</span>
+          </div>
+          ${reflectionRecords.length === 0 ? 
+            '<div style="font-size:12.5px; color:var(--text-muted); font-style:italic;">本期記錄中尚未填寫今日評價或自我反思。填寫觀察表時，記得在最後一步寫一句鼓勵自己的話！</div>' :
+            `<div style="display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto; padding-right:4px;">
+              ${reflectionRecords.map(item => `
+                <div class="summary-reflection-item">
+                  <span style="color:#7f56d9; font-weight:600; font-size:11.5px; white-space:nowrap; background:#f0ebfa; padding:2px 6px; border-radius:5px;">${item.dateStr}</span>
+                  <span style="flex:1; word-break:break-all;">${escapeHtml(item.text)}</span>
+                </div>
+              `).join('')}
+            </div>`
+          }
+        </div>
+
         <div style="margin-top:6px; padding:10px; background:#f0eefa; border-radius:10px; font-size:13px; color:#524785;">
           💬 <b>上師實修叮嚀：</b>「核心：不要求做得很多，而是『不要斷』，變成習慣。練久了，面對境界時，就能更絲滑地流水線走完：<b>辨認 ➔ 落地 ➔ 再看真相</b>！」
         </div>
@@ -1166,16 +1229,300 @@
     bodyEl.innerHTML = html;
 
     currentSummaryTextToCopy = `【2026 PEI ${periodName}心靈覺察總結報告】
-📈 保溫實修：本期間填寫 ${filteredRecords.length} 張觀察表 (日均 ${sheetsPerDay} 張)
+${currentWish ? `🌱 本期總結期許：${currentWish}\n` : ''}📈 保溫實修：本期間填寫 ${filteredRecords.length} 張觀察表 (日均 ${sheetsPerDay} 張)
 🧘 身心慣性：身體最常出現「${topBody ? topBody[0] : '無'}」，心裡最常流露「${topThought ? topThought[0] : '無'}」
 💜 情緒分佈：核心情緒為「${topEmo ? topEmo[0] : '無'} (佔 ${topEmoPct}%)」，最強烈為 ${strongestEmoText}
 🌱 落地轉化：當下落地率達 ${timingDownPct}%，以「${bestGrounding || '深呼吸'}」最為有效 (舒緩約 ${bestAvgRelief > 0 ? Math.round(bestAvgRelief) : 0}分)
 ☀️ 假相超越：好像的事實錯誤率達 ${falseRatioPct}%，成功識破杏仁核假相，看見客觀真相！
+${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecords.length}則）：\n` + reflectionRecords.slice(0, 5).map(r => `• [${r.dateStr}] ${r.text}`).join('\n') : ''}
 ---
 由「情緒觀察表 App」記錄與自主備份`;
   }
 
-  function updateDateRangeLabel() {
+  // 12. Responsive Offline HTML5 Canvas Line Chart
+  let chartHoverState = null;
+
+  function renderEmotionLineChart(filteredRecords) {
+    const canvas = document.getElementById('stats-line-chart');
+    const tooltip = document.getElementById('chart-tooltip');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    const displayWidth = rect.width || 340;
+    const displayHeight = 220;
+
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    if (ctx.resetTransform) {
+      ctx.resetTransform();
+    } else {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    ctx.scale(dpr, dpr);
+
+    ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+    // Sort records chronologically
+    const sorted = [...filteredRecords]
+      .filter(r => r.createdAt)
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    if (sorted.length === 0) {
+      if (tooltip) tooltip.style.display = 'none';
+      ctx.fillStyle = '#9b96b4';
+      ctx.font = '13px system-ui, -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('本期間尚無情緒記錄，面對境界時記錄即可呈現趨勢折線圖 🌸', displayWidth / 2, displayHeight / 2);
+      return;
+    }
+
+    const pad = { top: 22, right: 25, bottom: 32, left: 36 };
+    const plotW = displayWidth - pad.left - pad.right;
+    const plotH = displayHeight - pad.top - pad.bottom;
+
+    // Draw Y-axis gridlines and labels (0, 25, 50, 75, 100)
+    ctx.font = '11px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    const gridLevels = [0, 25, 50, 75, 100];
+    gridLevels.forEach(lvl => {
+      const y = pad.top + plotH * (1 - lvl / 100);
+      ctx.beginPath();
+      ctx.strokeStyle = lvl === 0 ? 'rgba(180, 175, 210, 0.5)' : 'rgba(225, 220, 245, 0.6)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash(lvl === 0 ? [] : [3, 4]);
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(displayWidth - pad.right, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#8f89a8';
+      ctx.fillText(String(lvl), pad.left - 6, y);
+    });
+
+    // Compute data points
+    const points = sorted.map((r, i) => {
+      let emoScore = 50;
+      if (r.emotions && r.emotions.length > 0) {
+        const scores = r.emotions.map(e => Number(e.score) || 0).filter(s => s > 0);
+        if (scores.length > 0) emoScore = Math.max(...scores);
+      }
+      const postScore = typeof r.postScore === 'number' ? r.postScore : Number(r.postScore || 0);
+      const relief = Math.max(0, emoScore - postScore);
+
+      const x = sorted.length === 1
+        ? pad.left + plotW / 2
+        : pad.left + (i / (sorted.length - 1)) * plotW;
+      const yEmo = pad.top + plotH * (1 - emoScore / 100);
+      const yPost = pad.top + plotH * (1 - postScore / 100);
+
+      const d = new Date(r.createdAt);
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+
+      return {
+        x,
+        yEmo,
+        yPost,
+        emoScore,
+        postScore,
+        relief,
+        topEmotion: r.emotions && r.emotions.length > 0 ? r.emotions.map(e => e.name).join('、') : '情緒',
+        grounding: r.grounding && r.grounding.length > 0 ? r.grounding.join('、') : '無',
+        dateLabel: `${m}/${day}`,
+        fullDateStr: `${m}/${day} ${hh}:${mm}`,
+        record: r
+      };
+    });
+
+    // 1. Draw Shaded Relief Area (Between yEmo and yPost)
+    ctx.beginPath();
+    points.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.yEmo);
+      else ctx.lineTo(p.x, p.yEmo);
+    });
+    for (let i = points.length - 1; i >= 0; i--) {
+      ctx.lineTo(points[i].x, points[i].yPost);
+    }
+    ctx.closePath();
+    const areaGrad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+    areaGrad.addColorStop(0, 'rgba(127, 86, 217, 0.16)');
+    areaGrad.addColorStop(1, 'rgba(16, 185, 129, 0.12)');
+    ctx.fillStyle = areaGrad;
+    ctx.fill();
+
+    // 2. Draw Emotion Line (Before Grounding - Purple #7f56d9)
+    ctx.beginPath();
+    ctx.strokeStyle = '#7f56d9';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    points.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.yEmo);
+      else ctx.lineTo(p.x, p.yEmo);
+    });
+    ctx.stroke();
+
+    // 3. Draw Post-Grounding Line (Green #10b981)
+    ctx.beginPath();
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    points.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.yPost);
+      else ctx.lineTo(p.x, p.yPost);
+    });
+    ctx.stroke();
+
+    // 4. Draw X-axis date labels with overlap prevention
+    ctx.fillStyle = '#8f89a8';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    let lastDrawnLabelX = -999;
+    points.forEach((p, i) => {
+      const isEnd = (i === points.length - 1);
+      const distFromEnd = isEnd ? 0 : (points[points.length - 1].x - p.x);
+      if (i === 0 || isEnd || (p.x - lastDrawnLabelX >= 52 && distFromEnd >= 38)) {
+        ctx.fillText(p.dateLabel, p.x, pad.top + plotH + 8);
+        lastDrawnLabelX = p.x;
+      }
+    });
+
+    // 5. Draw Dots
+    points.forEach(p => {
+      // Purple dot
+      ctx.beginPath();
+      ctx.arc(p.x, p.yEmo, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#7f56d9';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+
+      // Green dot
+      ctx.beginPath();
+      ctx.arc(p.x, p.yPost, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#10b981';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+    });
+
+    // 6. Draw Hover / Touch Indicator if active
+    if (chartHoverState && chartHoverState.index >= 0 && chartHoverState.index < points.length) {
+      const p = points[chartHoverState.index];
+
+      // Vertical guide line
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(127, 86, 217, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.moveTo(p.x, pad.top);
+      ctx.lineTo(p.x, pad.top + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Highlight circles
+      ctx.beginPath();
+      ctx.arc(p.x, p.yEmo, 7, 0, Math.PI * 2);
+      ctx.strokeStyle = '#7f56d9';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.yPost, 7, 0, Math.PI * 2);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Tooltip positioning
+      if (tooltip) {
+        tooltip.innerHTML = `
+          <div style="font-weight:700; color:#c4b5fd; margin-bottom:3px;">📅 ${p.fullDateStr}</div>
+          <div style="color:#ffffff;">🟣 落地前：<b>${escapeHtml(p.topEmotion)}</b> <span style="color:#e9d5ff;">(${p.emoScore}分)</span></div>
+          <div style="color:#ffffff;">🟢 落地後：<b>舒緩至 ${p.postScore}分</b> <span style="color:#86efac;">(降 ${p.relief}分)</span></div>
+          <div style="color:#cbd5e1; font-size:11px; margin-top:2px;">🌱 落地方式：${escapeHtml(p.grounding)}</div>
+        `;
+        tooltip.style.display = 'block';
+
+        const clampedX = Math.max(85, Math.min(displayWidth - 85, p.x));
+        const minY = Math.min(p.yEmo, p.yPost);
+        const maxY = Math.max(p.yEmo, p.yPost);
+
+        if (minY < 85) {
+          // Flip downward below points
+          tooltip.style.transform = 'translate(-50%, 14px)';
+          tooltip.style.top = `${maxY}px`;
+        } else {
+          // Flip upward above points
+          tooltip.style.transform = 'translate(-50%, -105%)';
+          tooltip.style.top = `${minY}px`;
+        }
+        tooltip.style.left = `${clampedX}px`;
+      }
+    } else {
+      if (tooltip) tooltip.style.display = 'none';
+    }
+
+    // Attach event listeners only once
+    if (!canvas._chartEventsAttached) {
+      canvas._chartEventsAttached = true;
+
+      const handlePointer = (clientX) => {
+        const cRect = canvas.getBoundingClientRect();
+        const mouseX = clientX - cRect.left;
+        if (!canvas._cachedPoints || canvas._cachedPoints.length === 0) return;
+
+        let closestIdx = 0;
+        let minDiff = Infinity;
+        canvas._cachedPoints.forEach((pt, idx) => {
+          const diff = Math.abs(pt.x - mouseX);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIdx = idx;
+          }
+        });
+
+        chartHoverState = { index: closestIdx };
+        renderEmotionLineChart(state._lastFilteredRecords || []);
+      };
+
+      canvas.addEventListener('mousemove', (e) => handlePointer(e.clientX));
+      canvas.addEventListener('mouseleave', () => {
+        chartHoverState = null;
+        renderEmotionLineChart(state._lastFilteredRecords || []);
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) handlePointer(e.touches[0].clientX);
+      }, { passive: true });
+
+      canvas.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) handlePointer(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener('resize', () => {
+        if (state.activeTab === 'stats') {
+          renderEmotionLineChart(state._lastFilteredRecords || []);
+        }
+      });
+    }
+
+    canvas._cachedPoints = points;
+    state._lastFilteredRecords = filteredRecords;
+  }
+
+
+    function updateDateRangeLabel() {
     const label = document.getElementById('stats-date-label');
     const now = new Date();
     const fmt = d => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
@@ -1267,6 +1614,7 @@
       exportedAt: new Date().toISOString(),
       startDate: state.startDate,
       tags: state.tags,
+      periodWishes: JSON.parse(localStorage.getItem('ea_period_wishes') || '{}'),
       records: state.records
     };
 
@@ -1297,6 +1645,9 @@
           state.records = data.records;
           if (data.tags) state.tags = data.tags;
           if (data.startDate) state.startDate = data.startDate;
+          if (data.periodWishes) {
+            localStorage.setItem('ea_period_wishes', JSON.stringify(data.periodWishes));
+          }
           persistData();
           renderRecordsList();
           calculateStatistics();
@@ -1315,6 +1666,7 @@
       exportedAt: new Date().toISOString(),
       startDate: state.startDate,
       tags: state.tags,
+      periodWishes: JSON.parse(localStorage.getItem('ea_period_wishes') || '{}'),
       records: state.records
     };
 
@@ -1558,6 +1910,13 @@
       renderRecordsList();
     } else if (tabId === 'stats') {
       calculateStatistics();
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (state._lastFilteredRecords) {
+            renderEmotionLineChart(state._lastFilteredRecords);
+          }
+        }, 50);
+      });
     } else if (tabId === 'data') {
       document.getElementById('input-start-date').value = state.startDate;
       const whInput = document.getElementById('input-discord-webhook');
@@ -1664,6 +2023,18 @@
       copySummaryBtn.addEventListener('click', () => {
         if (currentSummaryTextToCopy) {
           copyToClipboard(currentSummaryTextToCopy);
+        }
+      });
+    }
+
+    // Save Period Wish
+    const saveWishBtn = document.getElementById('btn-save-period-wish');
+    const wishInput = document.getElementById('summary-period-wish');
+    if (saveWishBtn && wishInput) {
+      saveWishBtn.addEventListener('click', saveCurrentPeriodWish);
+      wishInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          saveCurrentPeriodWish();
         }
       });
     }

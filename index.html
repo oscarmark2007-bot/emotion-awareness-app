@@ -273,7 +273,45 @@
               </div>
             </div>
             <div id="summary-report-body" style="font-size: 13.5px; line-height: 1.75; color: #4a456c;">
-              <!-- Dynamically generated weekly/monthly/quarterly/annual insight text -->
+              <!-- Dynamically generated weekly/monthly/quarterly/annual insight text & reflections -->
+            </div>
+
+            <!-- 本期總結期許輸入區 -->
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(210, 205, 235, 0.7);">
+              <div style="font-weight: 700; font-size: 13px; color: #433c6e; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>🌱 本期總結期許（給自己的期許／總結話語）：</span>
+                <span id="period-wish-status" style="font-size: 11px; color: #2e7d32; font-weight: 600; display:none;">✓ 已儲存</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="summary-period-wish" class="neumo-input" placeholder="例如：積極的醒過來、不要斷、隨時落地..." style="flex: 1; height: 38px; font-size: 13px; background: #ffffff;">
+                <button id="btn-save-period-wish" class="btn-primary" style="height: 38px; padding: 0 14px; font-size: 12.5px; white-space: nowrap;">
+                  儲存
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 情緒波動與落地舒緩趨勢折線圖卡片 -->
+          <div class="stats-card chart-card-container" id="line-chart-card">
+            <div class="chart-header">
+              <div style="font-size: 15px; font-weight: 700; color: #433c6e; display: flex; align-items: center; gap: 6px;">
+                📈 <span>情緒強度與落地舒緩折線圖</span>
+              </div>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <span class="chart-legend-badge" style="color: #7f56d9;">
+                  <span class="chart-dot-sample" style="background: #7f56d9;"></span> 落地前情緒
+                </span>
+                <span class="chart-legend-badge" style="color: #10b981;">
+                  <span class="chart-dot-sample" style="background: #10b981;"></span> 落地後舒緩
+                </span>
+              </div>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="stats-line-chart"></canvas>
+              <div id="chart-tooltip" class="chart-tooltip-box" style="display: none;"></div>
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 8px; text-align: center;">
+              💡 觸碰或游標滑過圓點，可查看該次事件情緒與舒緩成效
             </div>
           </div>
 
