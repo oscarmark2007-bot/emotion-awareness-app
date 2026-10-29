@@ -938,6 +938,151 @@ body {
   opacity: 1;
 }
 
+/* Smart Mobile Install Banner (One-click on Android / Visual guide on iOS) */
+.install-banner {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  margin: 10px 18px 0;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: var(--shadow-neumo);
+  animation: slideDown 0.35s ease-out;
+  position: relative;
+  z-index: 20;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.install-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.install-app-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(155, 140, 241, 0.3);
+  flex-shrink: 0;
+}
+
+.install-text-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.install-app-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #433e66;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.install-app-sub {
+  font-size: 11.5px;
+  color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.install-action-btn {
+  background: var(--primary-gradient);
+  border: none;
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.install-action-btn:active {
+  transform: scale(0.96);
+}
+
+.install-dismiss-btn {
+  background: transparent;
+  border: none;
+  color: #9d99b6;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+}
+
+/* iOS Bottom Pointer Guide Sheet */
+.ios-guide-sheet {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.ios-step-box {
+  background: #f7f6fc;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ios-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ios-step-content {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #4b466b;
+}
+
+.ios-arrow-bounce {
+  font-size: 28px;
+  color: var(--primary);
+  animation: bounceDown 1.4s infinite;
+  margin: 6px auto 0;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
 /* Mode Switcher Toggle */
 .mode-toggle-bar {
   display: flex;

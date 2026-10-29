@@ -1591,30 +1591,66 @@
   }
 
   function showPWAGuideModal() {
+    const isStandaloneNow = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const canOneClick = !!deferredPrompt;
+
     const content = `
       <div>
-        <h3 style="color: #4a4473; font-size: 19px; text-align: center; margin-bottom: 12px;">📲 如何加入手機主畫面 (免安裝像原生 App)</h3>
+        <h3 style="color: #4a4473; font-size: 19px; text-align: center; margin-bottom: 12px;">📲 手機安裝與使用說明</h3>
         
+        ${isStandaloneNow ? `
+          <div style="background:#e8f5e9; color:#2e7d32; padding:12px; border-radius:12px; margin-bottom:14px; font-weight:600; text-align:center; font-size:14px;">
+            ✓ 偵測到您目前已在獨立 App 模式下運行！所有資料完全離線保存在手機硬碟中。
+          </div>
+        ` : ''}
+
+        ${canOneClick ? `
+          <div style="margin-bottom: 16px;">
+            <button id="modal-oneclick-install-btn" class="btn-primary" style="width:100%; height:50px; font-size:15px;">
+              🚀 點此一鍵安裝「情緒觀察表」至手機桌面
+            </button>
+          </div>
+        ` : ''}
+
         <div style="font-size: 13.5px; line-height: 1.6; color: #4e4a6a;">
-          <div style="background:#f6f4fd; padding:12px; border-radius:12px; margin-bottom:12px;">
-            <b style="color:var(--primary);">🍎 iPhone (iOS Safari)：</b><br>
-            1. 在 Safari 瀏覽器中打開本網址<br>
-            2. 點擊螢幕底部的 <b>「分享」按鈕</b> (方形帶箭頭圖示 ⬆️)<br>
-            3. 向下滑動找到並點擊 <b>「加入主畫面」</b> (Add to Home Screen)<br>
-            4. 點擊右上角「新增」，手機桌面就會出現「情緒觀察」圖示，點開即可全螢幕離線使用！
+          <div style="background:#f6f4fd; padding:14px; border-radius:14px; margin-bottom:12px; border:1px solid var(--border-light);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <b style="color:var(--primary); font-size:14.5px;">🤖 Android 安卓手機 (可一鍵式安裝)</b>
+              <span style="font-size:11.5px; background:#e7e4f7; color:var(--primary); padding:2px 8px; border-radius:10px;">最方便</span>
+            </div>
+            1. 在 Chrome 或 Edge 瀏覽器打開本網址<br>
+            2. 畫面上方會自動出現 <b>「一鍵安裝」</b> 按鈕，點擊即自動將圖示放到手機桌面！<br>
+            3. 若沒看到橫幅，可點擊瀏覽器右上角 <b>「⋮」選單 ➜ 點選「安裝應用程式」</b>。
           </div>
 
-          <div style="background:#f6f4fd; padding:12px; border-radius:12px;">
-            <b style="color:var(--primary);">🤖 Android (Chrome)：</b><br>
-            1. 在 Chrome 瀏覽器中打開本網址<br>
-            2. 點擊右上角 <b>「⋮」選單</b><br>
-            3. 點選 <b>「安裝應用程式」</b> 或 <b>「新增至主螢幕」</b><br>
-            4. 桌面即完成安裝，無網際網路亦可正常填表覺察！
+          <div style="background:#f6f4fd; padding:14px; border-radius:14px; border:1px solid var(--border-light);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <b style="color:var(--primary); font-size:14.5px;">🍎 iPhone 蘋果手機 (需2步引導操作)</b>
+              <span style="font-size:11.5px; background:#e7e4f7; color:var(--primary); padding:2px 8px; border-radius:10px;">依 Apple 規範</span>
+            </div>
+            <i>因 iOS 系統安全機制限制，網頁無法越權自動安裝，需手動確認 2 步：</i><br>
+            1. 在 Safari 瀏覽器打開本網址，點螢幕下方中央的 <b>「分享」按鈕 ⬆️</b><br>
+            2. 選單往下滑動，點選 <b>「加入主畫面」➕ (Add to Home Screen)</b><br>
+            3. 點右上角「新增」，手機桌面就會出現專屬圖示，隨點隨用且支援完全離線！
           </div>
         </div>
       </div>
     `;
     openModal(content);
+
+    const oneClickBtn = document.getElementById('modal-oneclick-install-btn');
+    if (oneClickBtn && deferredPrompt) {
+      oneClickBtn.addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showToast('🎉 已成功加入手機桌面！');
+            closeModal();
+          }
+          deferredPrompt = null;
+        });
+      });
+    }
   }
 
   function showManageTagsModal() {
@@ -1659,7 +1695,116 @@
     openModal(content);
   }
 
-  // 16. Service Worker Registration
+  // 16. PWA Mobile Installation (One-Click for Android/Chrome + Visual Guide for iOS)
+  let deferredPrompt = null;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isAndroid = /Android/.test(navigator.userAgent);
+
+  function setupPWAInstallation() {
+    const banner = document.getElementById('mobile-install-banner');
+    const actionBtn = document.getElementById('btn-install-action');
+    const dismissBtn = document.getElementById('btn-dismiss-install');
+    const subText = document.getElementById('install-sub-text');
+
+    if (isStandalone) {
+      if (banner) banner.style.display = 'none';
+      return;
+    }
+
+    // Android & Chrome beforeinstallprompt event (Native 1-Click Install)
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (banner && !sessionStorage.getItem('dismissed_install_banner')) {
+        subText.innerText = '點擊一鍵安裝到手機桌面';
+        actionBtn.innerText = '一鍵安裝';
+        banner.style.display = 'flex';
+      }
+    });
+
+    // iOS Safari Detection (Apple requires Share -> Add to Home Screen)
+    if (isIOS && !isStandalone && !sessionStorage.getItem('dismissed_install_banner')) {
+      if (banner) {
+        subText.innerText = '加入 iPhone 桌面，全螢幕離線使用';
+        actionBtn.innerText = '安裝說明';
+        banner.style.display = 'flex';
+      }
+    }
+
+    if (actionBtn) {
+      actionBtn.addEventListener('click', () => {
+        if (deferredPrompt) {
+          // Native One-Click Install Prompt (Android / Chrome / Edge)
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              showToast('🎉 已成功加入手機桌面！');
+              if (banner) banner.style.display = 'none';
+            }
+            deferredPrompt = null;
+          });
+        } else if (isIOS) {
+          showIOSInstallSheet();
+        } else {
+          showPWAGuideModal();
+        }
+      });
+    }
+
+    if (dismissBtn) {
+      dismissBtn.addEventListener('click', () => {
+        if (banner) banner.style.display = 'none';
+        sessionStorage.setItem('dismissed_install_banner', 'true');
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      showToast('🎉 「情緒觀察表」已安裝至您的裝置！');
+      if (banner) banner.style.display = 'none';
+      deferredPrompt = null;
+    });
+  }
+
+  function showIOSInstallSheet() {
+    const content = `
+      <div class="ios-guide-sheet">
+        <h3 style="color: #4a4473; font-size: 19px; font-weight: 700;">🍎 iPhone 加入桌面教學</h3>
+        <p style="font-size: 13px; color: var(--text-sub);">
+          依 Apple 安全規範，只需簡單 2 步即可加入 iPhone 桌面像原生 App 一樣使用：
+        </p>
+
+        <div class="ios-step-box">
+          <div class="ios-step-num">1</div>
+          <div class="ios-step-content">
+            點擊 Safari 螢幕底部中央的 <b>「分享」圖示</b>（方框帶向上箭頭 ⬆️）。
+          </div>
+        </div>
+
+        <div class="ios-step-box">
+          <div class="ios-step-num">2</div>
+          <div class="ios-step-content">
+            在滑出的選單中往下滑動，找到並點選 <b>「加入主畫面」➕</b>（Add to Home Screen）。
+          </div>
+        </div>
+
+        <div class="ios-step-box">
+          <div class="ios-step-num">3</div>
+          <div class="ios-step-content">
+            點擊右上角的 <b>「新增」</b>，手機桌面就會出現「情緒觀察」圖示，免開瀏覽器隨開即用！
+          </div>
+        </div>
+
+        <div class="ios-arrow-bounce">⬇️</div>
+        <div style="font-size: 12px; color: var(--primary); font-weight: 600;">
+          請看下方 Safari 底部工具列中央的分享按鈕
+        </div>
+      </div>
+    `;
+    openModal(content);
+  }
+
+  // 17. Service Worker Registration
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').then(() => {
@@ -1675,6 +1820,7 @@
     initEventListeners();
     updateWizardUI();
     calculateStatistics();
+    setupPWAInstallation();
   });
 
 })();
