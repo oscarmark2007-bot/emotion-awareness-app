@@ -22,7 +22,7 @@
     emotions: [
       '訝異', '擔心', '疲累', '驚嚇', '難過', '壓力', '懊悔', '憂傷', 
       '緊張', '煩躁', '徬徨', '傻眼', '傷感', '焦慮', '無奈', '悲傷', 
-      '崩潰', '挫折', '恐懼', '害怕', '孤獨', '不解', '不喜', '憤怒', '委屈', '自責', '失望'
+      '崩潰', '挫折', '恐懼', '害怕', '孤獨', '孤單', '不解', '不喜', '憤怒', '委屈', '自責', '失望'
     ],
     grounding: [
       '按摩臉頰', '敲胸', '深呼吸', '按摩腸胃', '拔菜', '拔草', '行走', 
@@ -30,13 +30,35 @@
     ]
   };
 
+  function loadInitialTags() {
+    const saved = localStorage.getItem('ea_tags');
+    if (!saved) return JSON.parse(JSON.stringify(DEFAULT_TAGS));
+    try {
+      const parsed = JSON.parse(saved);
+      for (const category of Object.keys(DEFAULT_TAGS)) {
+        if (!Array.isArray(parsed[category])) {
+          parsed[category] = [...DEFAULT_TAGS[category]];
+        } else {
+          for (const item of DEFAULT_TAGS[category]) {
+            if (!parsed[category].includes(item)) {
+              parsed[category].push(item);
+            }
+          }
+        }
+      }
+      return parsed;
+    } catch (e) {
+      return JSON.parse(JSON.stringify(DEFAULT_TAGS));
+    }
+  }
+
   // 2. State Management
   const state = {
     activeTab: 'home', // 'home' | 'records' | 'stats' | 'data'
     mode: 'wizard', // 'wizard' | 'quick'
     currentStep: 1, // 1 through 12
     startDate: '2025-12-15', // Default from Page 17 (上課日期: 2025-12-15)
-    tags: JSON.parse(localStorage.getItem('ea_tags')) || JSON.parse(JSON.stringify(DEFAULT_TAGS)),
+    tags: loadInitialTags(),
     records: JSON.parse(localStorage.getItem('ea_records')) || [],
     discordWebhook: localStorage.getItem('ea_discordWebhook') || '',
     statsPeriod: 'all',
