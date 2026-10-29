@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#9b8cf1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="情緒觀察表">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>情緒觀察表 - 無憂覺察日記</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="lib/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="app-container">
+    <div class="ambient-sparkles"></div>
+
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="header-top-row">
+        <button id="btn-header-home" class="icon-btn" title="返回步驟起點或首頁">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </button>
+
+        <div class="app-brand-pill">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 0 0 9-9c0-4.97-4.03-9-9-9s-9 4.03-9 9a9 9 0 0 0 9 9Z"/><path d="M12 3v18"/><path d="M3 12h18"/></svg>
+          <span id="header-brand-title">情緒觀察表</span>
+        </div>
+
+        <button id="btn-header-trash" class="icon-btn danger" title="清空當前草稿重填">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </div>
+
+      <!-- Pastel Beads Arch -->
+      <div class="beads-arch-wrapper">
+        <div class="beads-arch" id="beads-bar">
+          <div class="bead active" data-step="1"></div>
+          <div class="bead" data-step="2"></div>
+          <div class="bead" data-step="3"></div>
+          <div class="bead" data-step="4"></div>
+          <div class="bead" data-step="5"></div>
+          <div class="bead" data-step="6"></div>
+          <div class="bead" data-step="7"></div>
+          <div class="bead" data-step="8"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-stage">
+      <!-- ================= TAB 1: 填表首頁 (HOME) ================= -->
+      <section id="tab-home" class="tab-page">
+        <!-- View Mode Switcher -->
+        <div class="mode-toggle-bar">
+          <div class="mode-toggle-btn active" id="btn-mode-wizard">🌸 步驟精靈模式</div>
+          <div class="mode-toggle-btn" id="btn-mode-quick">📋 全覽填寫模式</div>
+        </div>
+
+        <!-- 1. Wizard Step-by-Step Mode -->
+        <div id="wizard-flow-container">
+          <!-- Step Title Container -->
+          <div class="step-title-box">
+            <span class="step-num-badge" id="step-badge">步驟 1 / 12</span>
+            <h2 class="step-main-title" id="step-title">事件</h2>
+            <p class="step-sub-prompt" id="step-prompt">發生了什麼事？客觀簡潔地記錄下來</p>
+          </div>
+
+          <!-- Dynamic Step Content Body -->
+          <div id="wizard-body">
+            <!-- Injected dynamically by app.js based on current step -->
+          </div>
+
+          <!-- Wizard Bottom Navigation -->
+          <div class="wizard-nav-row">
+            <button id="btn-wizard-prev" class="nav-pill-btn nav-prev-btn" title="上一步">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button id="btn-wizard-next" class="nav-pill-btn nav-next-btn">
+              <span id="wizard-next-text">下一步</span>
+              <svg id="wizard-next-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Full Form Quick Overview Mode -->
+        <div id="quick-form-container" style="display: none;">
+          <div class="settings-section-card">
+            <div class="settings-card-title">📝 完整 12 欄位情緒觀察表</div>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">1. 事件發生的時間與事件 (文字)</label>
+                <div style="display:flex; gap:8px; margin:6px 0;">
+                  <input type="datetime-local" id="quick-time" class="neumo-input" style="flex:1;">
+                </div>
+                <textarea id="quick-event" class="neumo-textarea" placeholder="發生了什麼事..."></textarea>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">2. 觸發點 (境 / 那一句話 / 眼神 / 動作)</label>
+                <textarea id="quick-trigger" class="neumo-textarea" style="min-height:75px;" placeholder="觸發情緒的點是..."></textarea>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">3. 身體反應 (選單標籤)</label>
+                <div id="quick-body-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">4. 心裡自然流露的話 (選單標籤)</label>
+                <div id="quick-thoughts-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">5. 情緒類別 (選單標籤)</label>
+                <div id="quick-emotions-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
+              </div>
+
+              <div id="quick-intensity-box">
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">6. 情緒指數 (0~100)</label>
+                <div id="quick-intensity-sliders" class="intensity-cards-list" style="margin-top:8px;"></div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">7. 情緒落地方式 (選單標籤)</label>
+                <div id="quick-grounding-tags" class="tag-cloud" style="max-height:160px; margin:6px 0;"></div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">8. 情緒落地時機</label>
+                <div class="choice-pill-group" id="quick-timing-choices">
+                  <div class="choice-pill selected" data-val="當下">當下</div>
+                  <div class="choice-pill" data-val="事後">事後</div>
+                  <div class="choice-pill" data-val="未落地">未落地</div>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">9. 落地後情緒指數 (0~100)</label>
+                <div style="display:flex; align-items:center; gap:14px; margin-top:8px;">
+                  <input type="range" min="0" max="100" id="quick-post-score" class="neumo-slider" value="30">
+                  <span id="quick-post-score-val" class="intensity-badge">30</span>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">10. 好像的事實 (假相 / 腦補)</label>
+                <textarea id="quick-seemed-fact" class="neumo-textarea" style="min-height:80px;" placeholder="當時我以為/認定的事實是..."></textarea>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">11. 確立的事實 (真相 / 客觀事實)</label>
+                <textarea id="quick-real-fact" class="neumo-textarea" style="min-height:80px;" placeholder="冷靜查證後，真正的客觀真相是..."></textarea>
+                <div style="margin-top:8px;">
+                  <span style="font-size:12.5px; color:#787593;">「好像的事實」是否錯誤？</span>
+                  <div class="choice-pill-group" id="quick-fact-error-choices">
+                    <div class="choice-pill selected" data-val="完全錯誤">完全錯誤 (假相)</div>
+                    <div class="choice-pill" data-val="部分錯誤">部分錯誤</div>
+                    <div class="choice-pill" data-val="符合事實">符合事實</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-weight:600; font-size:13.5px; color:#5b567c;">12. 今日評價 (自我肯定 / 觀功念恩)</label>
+                <textarea id="quick-reflection" class="neumo-textarea" style="min-height:80px;" placeholder="對自己的肯定、溫柔呵護、看到的善意或學習..."></textarea>
+              </div>
+
+              <button id="btn-quick-save" class="btn-primary" style="height:52px; font-size:16px;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                儲存情緒觀察表
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: 記錄列表 (RECORDS) ================= -->
+      <section id="tab-records" class="tab-page" style="display: none;">
+        <div style="margin-bottom: 16px;">
+          <input type="text" id="record-search-input" class="neumo-input" placeholder="🔍 搜尋事件、情緒、身體反應或觸發點...">
+        </div>
+
+        <div id="records-list" class="records-container">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div id="records-empty" style="text-align: center; padding: 40px 20px; color: var(--text-sub); display: none;">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#beb8ef" stroke-width="1.5" style="margin-bottom: 12px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+          <p style="font-size: 15px; font-weight: 500;">目前尚無記錄</p>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">點擊左下方「首頁」開始寫第一張情緒觀察表吧！</p>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: 統計分析 (STATISTICS - Page 17 Exact Replica) ================= -->
+      <section id="tab-stats" class="tab-page" style="display: none;">
+        <div class="stats-container">
+          <!-- Filter chips bar -->
+          <div class="stats-filter-bar">
+            <div class="filter-chip active" data-period="week">本週</div>
+            <div class="filter-chip" data-period="last_week">上週</div>
+            <div class="filter-chip" data-period="month">本月</div>
+            <div class="filter-chip" data-period="last_month">上個月</div>
+            <div class="filter-chip" data-period="year">今年</div>
+            <div class="filter-chip" data-period="last_year">去年</div>
+            <div class="filter-chip" data-period="all">全部</div>
+            <div class="filter-chip" data-period="custom">自訂</div>
+          </div>
+
+          <!-- Custom Date Range Picker (shown when custom is active) -->
+          <div id="custom-date-box" style="display:none; gap:8px; justify-content:center; align-items:center; margin-bottom:8px;">
+            <input type="date" id="stats-date-start" class="neumo-input" style="height:38px; font-size:13px; width:135px; padding:0 10px;">
+            <span style="font-size:13px; color:var(--text-sub);">~</span>
+            <input type="date" id="stats-date-end" class="neumo-input" style="height:38px; font-size:13px; width:135px; padding:0 10px;">
+          </div>
+
+          <!-- Big Statistics Trigger Button -->
+          <button id="btn-run-stats" class="btn-primary" style="width: 100%; height: 46px;">
+            統計
+          </button>
+
+          <!-- Current Range Date Label -->
+          <div class="date-range-display" id="stats-date-label">
+            2026/10/19 ~ 2026/10/24
+          </div>
+
+          <!-- 1. 學習天數 -->
+          <div class="stats-card">
+            <div class="stats-card-title">學習情緒觀察表的天數</div>
+            <div class="stats-card-highlight" id="stat-learning-days">0 天</div>
+            <div class="stats-card-sub" id="stat-start-date-label">(上課日期: 2025-12-15)</div>
+          </div>
+
+          <!-- 2. 填寫張數 -->
+          <div class="stats-card">
+            <div class="stats-card-title">填寫的張數</div>
+            <div class="stats-card-highlight" id="stat-sheets-count">0 張</div>
+            <div class="stats-card-sub" id="stat-sheets-per-day">(0 張／天)</div>
+          </div>
+
+          <!-- 3. 最常出現的身體反應 -->
+          <div class="stats-card">
+            <div class="stats-card-title">最常出現的身體反應（次數）</div>
+            <div class="stats-rank-list" id="stat-body-rank">
+              <div style="color:var(--text-muted); font-size:13px;">暫無資料</div>
+            </div>
+          </div>
+
+          <!-- 4. 最常出現的心裡自然流露的話 -->
+          <div class="stats-card">
+            <div class="stats-card-title">最常出現的心裡自然流露的話（次數）</div>
+            <div class="stats-rank-list" id="stat-thoughts-rank">
+              <div style="color:var(--text-muted); font-size:13px;">暫無資料</div>
+            </div>
+          </div>
+
+          <!-- 5. 最常出現的情緒 (百分比) -->
+          <div class="stats-card">
+            <div class="stats-card-title">最常出現的情緒（百分比）</div>
+            <div class="stats-rank-list" id="stat-emotions-rank">
+              <div style="color:var(--text-muted); font-size:13px;">暫無資料</div>
+            </div>
+          </div>
+
+          <!-- 6. 最強烈的情緒 -->
+          <div class="stats-card">
+            <div class="stats-card-title">最強烈的情緒（指數／次數）</div>
+            <div class="stats-card-highlight" id="stat-strongest-emotion">無</div>
+          </div>
+
+          <!-- 7. 當下及事後情緒落地的比例 -->
+          <div class="stats-card">
+            <div class="stats-card-title">當下及事後情緒落地的比例</div>
+            <div class="stats-card-highlight" id="stat-timing-ratio" style="font-size:20px;">
+              當下 0%　事後 0%
+            </div>
+            <div class="stats-card-sub" id="stat-timing-unlanded">未落地: 0%</div>
+          </div>
+
+          <!-- 8. 最常用的情緒落地 -->
+          <div class="stats-card">
+            <div class="stats-card-title">最常用的情緒落地（次數）</div>
+            <div class="stats-rank-list" id="stat-grounding-rank">
+              <div style="color:var(--text-muted); font-size:13px;">暫無資料</div>
+            </div>
+          </div>
+
+          <!-- 9. 最有效的情緒落地 -->
+          <div class="stats-card">
+            <div class="stats-card-title">最有效的情緒落地（舒緩指數／次數）</div>
+            <div class="stats-card-highlight" id="stat-effective-grounding" style="font-size:22px;">無</div>
+            <div class="stats-card-sub">評估依據：落地前後情緒指數舒緩幅度</div>
+          </div>
+
+          <!-- 10. 「好像的事實」錯誤的比例 -->
+          <div class="stats-card">
+            <div class="stats-card-title">「好像的事實」錯誤的比例</div>
+            <div class="stats-card-highlight" id="stat-false-ratio" style="color:#f07185;">0%</div>
+            <div class="stats-card-sub">杏仁核過度反應超越事實的次數比例</div>
+          </div>
+
+          <!-- Excel 匯出按鈕 (Matching Page 17) -->
+          <button id="btn-export-excel" class="excel-export-btn">
+            <span class="excel-icon-badge">X</span>
+            匯出統計報表 (Excel / XLSX)
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: 資料與備份 (DATA & BACKUP) ================= -->
+      <section id="tab-data" class="tab-page" style="display: none;">
+        <!-- Hard Drive Backup Section -->
+        <div class="settings-section-card">
+          <div class="settings-card-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            備份在自己的硬碟 (100% 自主掌控)
+          </div>
+          
+          <div class="backup-alert-banner">
+            本 App 資料完全儲存在您的手機或電腦硬碟中，無雲端白名單限制，保護個人心靈隱私。請定期備份保存！
+          </div>
+
+          <div class="settings-btn-grid">
+            <button id="btn-backup-json" class="btn-primary settings-full-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              下載完整備份檔 (JSON 檔案)
+            </button>
+
+            <button id="btn-trigger-restore" class="record-action-btn settings-full-btn" style="height:46px;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              從硬碟還原備份檔 (讀取 JSON)
+            </button>
+            <input type="file" id="file-restore-input" accept=".json" style="display:none;">
+
+            <button id="btn-save-to-local-server" class="record-action-btn settings-full-btn" style="height:46px; border-color:#9b8cf1; color:#5f53aa;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              一鍵寫入電腦專屬目錄 (backups/ 資料夾)
+            </button>
+          </div>
+        </div>
+
+        <!-- Share and Mobile App Section -->
+        <div class="settings-section-card">
+          <div class="settings-card-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            手機執行與分享給同修、家人
+          </div>
+          <p style="font-size:13.5px; color:var(--text-sub); line-height:1.5; margin-bottom:12px;">
+            在手機上使用與分享非常簡單！可以用手機相機掃描 QR Code，或者加入手機主畫面像原生 App 一樣離線運行。
+          </p>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button id="btn-show-app-qrcode" class="record-action-btn" style="height:46px;">
+              📱 顯示手機連線 QR Code
+            </button>
+            <button id="btn-copy-app-link" class="record-action-btn" style="height:46px;">
+              🔗 複製 App 網址與分享文字
+            </button>
+            <button id="btn-show-pwa-guide" class="record-action-btn" style="height:46px;">
+              📲 如何加入 iPhone / Android 手機主畫面？
+            </button>
+          </div>
+        </div>
+
+        <!-- Vocabulary / Tags Management -->
+        <div class="settings-section-card">
+          <div class="settings-card-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            選單詞庫管理 (身體反應 / 心裡的話 / 情緒 / 落地)
+          </div>
+          <p style="font-size:13px; color:var(--text-sub); margin-bottom:12px;">
+            您可以在填寫時隨時輸入新增選項，也可以在此管理所有預設詞彙。
+          </p>
+          <div class="settings-btn-grid">
+            <button id="btn-manage-tags" class="record-action-btn settings-full-btn" style="height:46px;">
+              🏷️ 檢視與自訂詞庫標籤
+            </button>
+            <button id="btn-reset-tags" class="record-action-btn settings-full-btn" style="height:46px; color:#9c99b2;">
+              🔄 重設詞庫為營隊預設值
+            </button>
+          </div>
+        </div>
+
+        <!-- Date Settings & Demo Data -->
+        <div class="settings-section-card">
+          <div class="settings-card-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            學習起算日與資料管理
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:13px; color:var(--text-sub); display:block; margin-bottom:6px;">上課 / 覺察學習起算日 (計算學習天數)</label>
+            <input type="date" id="input-start-date" class="neumo-input" style="width:100%; height:44px;">
+          </div>
+          <div class="settings-btn-grid">
+            <button id="btn-load-sample-data" class="record-action-btn settings-full-btn" style="height:46px; border-color:#8e7ee7; color:#5c4eb5;">
+              ✨ 載入營隊範例資料 (體驗 21 張完整統計)
+            </button>
+            <button id="btn-clear-all-data" class="record-action-btn settings-full-btn" style="height:46px; color:#e05666; border-color:#f8d7da;">
+              ⚠️ 清空所有記錄 (重新開始)
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation Dock (4 Tabs) -->
+    <nav class="bottom-dock">
+      <div class="dock-item active" id="dock-home" data-tab="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>首頁</span>
+      </div>
+
+      <div class="dock-item" id="dock-records" data-tab="records">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        <span>記錄</span>
+      </div>
+
+      <div class="dock-item" id="dock-stats" data-tab="stats">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        <span>統計</span>
+      </div>
+
+      <div class="dock-item" id="dock-data" data-tab="data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        <span>資料</span>
+      </div>
+    </nav>
+
+    <!-- General Modal Popup -->
+    <div id="general-modal" class="modal-overlay">
+      <div class="modal-content-card">
+        <button id="modal-close-btn" class="modal-close-btn">&times;</button>
+        <div id="modal-body">
+          <!-- Dynamic Content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-msg" class="toast-msg">已儲存！</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
