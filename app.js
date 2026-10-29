@@ -38,6 +38,7 @@
     startDate: '2025-12-15', // Default from Page 17 (上課日期: 2025-12-15)
     tags: JSON.parse(localStorage.getItem('ea_tags')) || JSON.parse(JSON.stringify(DEFAULT_TAGS)),
     records: JSON.parse(localStorage.getItem('ea_records')) || [],
+    discordWebhook: localStorage.getItem('ea_discordWebhook') || '',
     statsPeriod: 'all',
     
     // Draft for current entry
@@ -71,6 +72,7 @@
     localStorage.setItem('ea_records', JSON.stringify(state.records));
     localStorage.setItem('ea_tags', JSON.stringify(state.tags));
     localStorage.setItem('ea_startDate', state.startDate);
+    localStorage.setItem('ea_discordWebhook', state.discordWebhook || '');
   }
 
   // Load custom start date if saved
@@ -778,7 +780,8 @@
       </div>
 
       <div style="display:flex; gap:10px; margin-top:16px;">
-        <button id="modal-share-btn" class="btn-primary" style="flex:1;">📤 分享此卡片</button>
+        <button id="modal-share-btn" class="btn-primary" style="flex:1;">📤 複製/分享卡片</button>
+        <button id="modal-discord-btn" class="record-action-btn" style="flex:1; color:#5865f2; border-color:#5865f2;">💬 Discord 推播</button>
       </div>
     `;
 
@@ -786,6 +789,10 @@
     document.getElementById('modal-share-btn').addEventListener('click', () => {
       shareRecord(r.id);
     });
+    const discordBtn = document.getElementById('modal-discord-btn');
+    if (discordBtn) {
+      discordBtn.addEventListener('click', () => pushRecordToDiscord(r));
+    }
   }
 
   function shareRecord(id) {
@@ -1305,6 +1312,82 @@
     });
   }
 
+
+  // 10.1 Discord Webhook Integration
+  function sendDiscordWebhook(payload) {
+    if (!state.discordWebhook) {
+      if (confirm('尚未設定 Discord Webhook 網址！\n\n是否前往「資料」頁籤設定？（設定後即可一鍵自動推播至您的 Discord 頻道）')) {
+        switchTab('data');
+        const input = document.getElementById('input-discord-webhook');
+        if (input) input.focus();
+      }
+      return Promise.reject('No webhook');
+    }
+
+    showToast('🚀 正在傳送至 Discord 頻道...');
+    return fetch(state.discordWebhook, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(res => {
+      if (res.ok || res.status === 204) {
+        showToast('🎉 已成功發送至 Discord 頻道！');
+        return true;
+      } else {
+        throw new Error('HTTP ' + res.status);
+      }
+    }).catch(err => {
+      alert('發送至 Discord 失敗，請檢查 Webhook 網址是否正確。錯誤訊息：' + err.message);
+    });
+  }
+
+  function pushRecordToDiscord(record) {
+    const emoList = (record.emotions || []).map(e => `${e.name} ${e.score}分`).join('、 ') || '無';
+    const bodyList = (record.bodyReactions || []).join('、 ') || '無';
+    const thoughtsList = (record.thoughts || []).join('、 ') || '無';
+    const groundList = (record.grounding || []).join('、 ') || '無';
+
+    const embed = {
+      title: '🌸 2026 PEI 第三屆情緒觀察表記錄',
+      color: 0x9b8cf1,
+      description: `📅 **記錄時間**：${(record.createdAt || '').replace('T', ' ')}`,
+      fields: [
+        { name: '⚡ 觸發點', value: record.trigger || '無 (略過未填)', inline: false },
+        { name: '🩺 身體反應', value: bodyList, inline: true },
+        { name: '💭 心裡流露的話', value: thoughtsList, inline: true },
+        { name: '💜 情緒類別與指數', value: emoList, inline: false },
+        { name: '🌱 情緒落地', value: `${groundList} (${record.timing || '當下'}落地，後降為 ${record.postScore || 30}分)`, inline: false },
+        { name: '🌫️ 好像的事實 (假相)', value: record.seemedFact || '無', inline: true },
+        { name: '☀️ 確立的事實 (真相)', value: `${record.realFact || '無'}\n*[核對: ${record.factEvaluation || '完全錯誤'}]*`, inline: true },
+        { name: '📝 事件經過', value: record.event || '無 (略過未填)', inline: false },
+        { name: '🌟 今日評價', value: record.reflection || '無', inline: false }
+      ],
+      footer: { text: '情緒觀察表 App · 辨認 ➔ 落地 ➔ 再看真相 · 本機硬碟自主備份' },
+      timestamp: new Date().toISOString()
+    };
+
+    return sendDiscordWebhook({
+      content: '📌 **來自情緒觀察表的日常實修覺察分享**：',
+      embeds: [embed]
+    });
+  }
+
+  function pushSummaryToDiscord() {
+    const title = document.getElementById('summary-report-title').innerText || '心靈覺察總結報告';
+    const embed = {
+      title: title,
+      color: 0x9b8cf1,
+      description: currentSummaryTextToCopy,
+      footer: { text: '2026 PEI 第三屆情緒觀察營 · 覺察保溫計畫' },
+      timestamp: new Date().toISOString()
+    };
+
+    return sendDiscordWebhook({
+      content: `📢 **${title} 摘要出爐**：`,
+      embeds: [embed]
+    });
+  }
+
   // 11. Sample Data Loader (Matching Page 17 exact statistics: 21 sheets, 皺眉 15次, 抿嘴 10次, 倒吸一口氣 8次, 傻眼 43%, 疲累 50/2次, 落地比例 25%/50%, 錯誤率 90%)
   function loadSampleData() {
     if (state.records.length > 0 && !confirm('載入範例資料將新增 21 張營隊示範記錄，確定載入嗎？')) {
@@ -1455,6 +1538,8 @@
       calculateStatistics();
     } else if (tabId === 'data') {
       document.getElementById('input-start-date').value = state.startDate;
+      const whInput = document.getElementById('input-discord-webhook');
+      if (whInput) whInput.value = state.discordWebhook || '';
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1511,6 +1596,44 @@
     const skipBtn = document.getElementById('btn-wizard-skip');
     if (skipBtn) {
       skipBtn.addEventListener('click', wizardNext);
+    }
+
+
+    // Discord Integration Listeners
+    const discordSummaryBtn = document.getElementById('btn-discord-push-summary');
+    if (discordSummaryBtn) {
+      discordSummaryBtn.addEventListener('click', pushSummaryToDiscord);
+    }
+
+    const saveWebhookBtn = document.getElementById('btn-save-discord-webhook');
+    if (saveWebhookBtn) {
+      saveWebhookBtn.addEventListener('click', () => {
+        const val = (document.getElementById('input-discord-webhook').value || '').trim();
+        state.discordWebhook = val;
+        persistData();
+        showToast('💾 Discord Webhook 網址已儲存！');
+      });
+    }
+
+    const testWebhookBtn = document.getElementById('btn-test-discord-webhook');
+    if (testWebhookBtn) {
+      testWebhookBtn.addEventListener('click', () => {
+        const val = (document.getElementById('input-discord-webhook').value || '').trim();
+        if (!val) {
+          alert('請先在上方輸入 Discord Webhook 網址！');
+          return;
+        }
+        state.discordWebhook = val;
+        persistData();
+        sendDiscordWebhook({
+          content: '🎉 **「情緒觀察表 App」連線測試成功！**\n恭喜您已成功串接 Discord 頻道，今後完成觀察表或總結報告時，皆可一鍵推播分享至此！',
+          embeds: [{
+            title: '🌸 2026 PEI 情緒觀察營 · 覺察保溫計畫',
+            color: 0x9b8cf1,
+            description: '流水線迅速走完：**辨認 ➔ 落地 ➔ 再看真相**。祝身心安康，覺察不斷線！'
+          }]
+        });
+      });
     }
 
     // Copy Summary Report

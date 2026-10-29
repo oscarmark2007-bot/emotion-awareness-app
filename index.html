@@ -7,6 +7,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="情緒觀察表">
+  <!-- OpenGraph Metadata for Discord, LINE, Facebook Sharing -->
+  <meta property="og:title" content="🌸 情緒觀察表 - 無憂覺察日記">
+  <meta property="og:description" content="2026 PEI 第三屆情緒觀察營 覺察實修工具。辨認 ➔ 落地 ➔ 再看真相，支援手機全螢幕運行、本機硬碟自主備份與週季月年總結。">
+  <meta property="og:image" content="https://oscarmark2007-bot.github.io/emotion-awareness-app/icons/icon-512.png">
+  <meta property="og:url" content="https://oscarmark2007-bot.github.io/emotion-awareness-app/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icons/favicon.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -256,9 +263,14 @@
               <h3 style="font-size: 16.5px; font-weight: 700; color: #433c6e;" id="summary-report-title">
                 📋 本週心靈覺察總結
               </h3>
-              <button id="btn-copy-summary" class="record-action-btn" style="padding: 5px 12px; font-size: 12px; flex: initial;">
-                📤 複製總結
-              </button>
+              <div style="display:flex; gap:6px;">
+                <button id="btn-copy-summary" class="record-action-btn" style="padding: 5px 10px; font-size: 12px; flex: initial;">
+                  📤 複製總結
+                </button>
+                <button id="btn-discord-push-summary" class="record-action-btn" style="padding: 5px 10px; font-size: 12px; flex: initial; color: #5865f2; border-color: #5865f2;" title="直接推播至 Discord 頻道">
+                  💬 Discord
+                </button>
+              </div>
             </div>
             <div id="summary-report-body" style="font-size: 13.5px; line-height: 1.75; color: #4a456c;">
               <!-- Dynamically generated weekly/monthly/quarterly/annual insight text -->
@@ -398,6 +410,28 @@
             </button>
             <button id="btn-show-pwa-guide" class="record-action-btn" style="height:46px;">
               📲 如何加入 iPhone / Android 手機主畫面？
+            </button>
+          </div>
+        </div>
+
+        <!-- Discord Webhook Integration Section -->
+        <div class="settings-section-card">
+          <div class="settings-card-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+            💬 Discord 頻道推播整合 (選填)
+          </div>
+          <p style="font-size:13px; color:var(--text-sub); line-height:1.5; margin-bottom:12px;">
+            可在您的 Discord 伺服器頻道中建立 Webhook，將此處的網址填入，即可一鍵將「觀察表記錄」或「週季月年總結報告」推播到 Discord！
+          </p>
+          <div style="margin-bottom:12px;">
+            <input type="url" id="input-discord-webhook" class="neumo-input" placeholder="貼上 Discord Webhook 網址 (https://discord.com/api/webhooks/...)" style="width:100%; font-size:13px;">
+          </div>
+          <div class="settings-btn-grid">
+            <button id="btn-save-discord-webhook" class="btn-primary settings-full-btn" style="height:44px; font-size:14px;">
+              💾 儲存 Webhook 網址
+            </button>
+            <button id="btn-test-discord-webhook" class="record-action-btn settings-full-btn" style="height:44px; font-size:13.5px; color:#5865f2; border-color:#5865f2;">
+              🧪 發送測試推播到 Discord
             </button>
           </div>
         </div>
