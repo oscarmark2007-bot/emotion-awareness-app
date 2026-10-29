@@ -2,6 +2,11 @@
 > **2026 PEI 第三屆情緒觀察營結業實修工具**  
 > 「核心：不要求做得很多，而是『不要斷』，變成習慣…… 練久了，面對境界時，就能更快走完：**辨認 → 落地 → 再看真相**。」
 
+### 📱 線上直接體驗與手機安裝網址 (免下載，點開即用)：
+👉 **[https://oscarmark2007-bot.github.io/emotion-awareness-app/](https://oscarmark2007-bot.github.io/emotion-awareness-app/)**
+
+*(手機開啟上述網址後，點擊「加入主畫面」，即可作為獨立 App 離線使用！)*
+
 ---
 
 ## 🌟 專案緣起與自主特色
