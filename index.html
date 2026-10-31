@@ -53,9 +53,14 @@
           <span id="header-brand-title">情緒觀察表</span>
         </div>
 
-        <button id="btn-header-trash" class="icon-btn danger" title="清空當前草稿重填">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        </button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button id="btn-header-manual" class="icon-btn" title="查看操作手冊與實修指南">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          </button>
+          <button id="btn-header-trash" class="icon-btn danger" title="清空當前草稿重填">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
       </div>
 
       <!-- Pastel Beads Arch -->
@@ -635,6 +640,20 @@
 
       <!-- ================= TAB 4: 資料與備份 (DATA & BACKUP) ================= -->
       <section id="tab-data" class="tab-page" style="display: none;">
+        <!-- User Manual Section (Top of Data Tab) -->
+        <div class="settings-section-card" style="border: 1.5px solid #d9d4f7; background: linear-gradient(145deg, #ffffff 0%, #f6f3fc 100%);">
+          <div class="settings-card-title" style="color: #433c6e;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            📖 情緒觀察表 · 完整使用操作手冊
+          </div>
+          <p style="font-size:13px; color:var(--text-sub); line-height:1.55; margin-bottom:12px;">
+            完整說明「辨認 ➔ 落地 ➔ 真相 ➔ 事件」實修心法、12 步驟填寫技巧、心靈塗鴉照片附加、週季月年總結報告與本地硬碟備份指南。
+          </p>
+          <button id="btn-show-user-manual" class="btn-primary" style="width: 100%; height: 46px; font-size: 14.5px;">
+            📖 打開使用操作手冊
+          </button>
+        </div>
+
         <!-- Hard Drive Backup Section -->
         <div class="settings-section-card">
           <div class="settings-card-title">

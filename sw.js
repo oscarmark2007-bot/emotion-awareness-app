@@ -1,5 +1,5 @@
 // Service Worker for Emotion Awareness PWA - Offline Support
-const CACHE_NAME = 'emotion-awareness-v1.3';
+const CACHE_NAME = 'emotion-awareness-v1.4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

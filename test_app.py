@@ -216,19 +216,19 @@ def run_tests():
             page.mouse.up()
             log_test("7-2", "自己畫：觸控/滑鼠塗鴉、色彩盤切換驗證成功")
     
-            # 相似度比對與意象切換
-            page.locator("#compare-studio-card").scroll_into_view_if_needed()
-            time.sleep(0.4)
-            page.locator(".archetype-chip[data-key='sun']").click()
-            time.sleep(0.4)
-            score_val = page.locator("#metric-overall").inner_text()
-            assert "%" in score_val, "綜合相似度分數應計算完成"
-            log_test("7-3", f"視覺相似度比對工作台：結構感知 aHash 與色彩直方圖運算完成 (相似度 {score_val})")
-    
             # 帶入觀察表
             page.locator("#btn-doodle-to-draft").click()
             time.sleep(0.4)
-            log_test("7-4", "「帶入記錄」按鈕成功將塗鴉壓縮轉存為觀察表記錄附件")
+            log_test("7-3", "「帶入記錄」按鈕成功將塗鴉壓縮轉存為觀察表記錄附件")
+
+            # 8. 操作手冊彈出檢驗
+            page.locator("#btn-header-manual").click()
+            time.sleep(0.5)
+            manual_modal = page.locator("#general-modal")
+            assert manual_modal.is_visible(), "操作手冊彈跳視窗應可見"
+            assert "完整使用操作手冊" in manual_modal.inner_text()
+            page.screenshot(path=os.path.join(SCREENSHOT_DIR, "10_user_manual_modal.png"))
+            log_test(8, "操作手冊 (User Manual) 呼叫與內容檢驗完全通過！")
 
             browser.close()
     finally:

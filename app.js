@@ -67,7 +67,7 @@
     draft: getEmptyDraft(),
     editingRecordId: null,
 
-    // Doodle Canvas & Comparison State
+    // Doodle Canvas State
     doodle: {
       canvas: null,
       ctx: null,
@@ -79,12 +79,7 @@
       brushSize: 6,
       bgColor: '#ffffff',
       history: [],
-      historyIndex: -1,
-      refImageSrc: null,
-      refImageObj: null,
-      compareMode: 'curtain', // 'curtain' | 'side' | 'overlay'
-      curtainRatio: 0.5,
-      overlayAlpha: 0.5
+      historyIndex: -1
     }
   };
 
@@ -1958,7 +1953,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     } else if (tabId === 'doodle') {
       setTimeout(() => {
         initOrResizeDoodleCanvas();
-        renderComparisonViewport();
       }, 50);
     } else if (tabId === 'stats') {
       calculateStatistics();
@@ -1980,11 +1974,9 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
 
 
   // ============================================================
-  // 15. 心靈塗鴉與視覺比對模組 (DOODLE & VISUAL SEARCH MODULE)
-  // 支援：自己畫、upload照片、照相、上網找相似 (Google Lens)、深度比對
+  // 15. 心靈塗鴉模組 (DOODLE STUDIO MODULE)
+  // 支援：1. 自己畫 (自由筆刷/色盤/畫紙)、2. upload照片、3. 照相 (手機相機即拍)
   // ============================================================
-
-  const ARCHETYPES_DATA = {'lake': 'data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22420%22%20viewBox%3D%220%200%20600%20420%22%3E%3Crect%20width%3D%22600%22%20height%3D%22420%22%20fill%3D%22%230f172a%22/%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231e1b4b%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2338bdf8%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22water%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230284c7%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230f172a%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22600%22%20height%3D%22230%22%20fill%3D%22url%28%23sky%29%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22140%22%20r%3D%2250%22%20fill%3D%22%23fef08a%22%20opacity%3D%220.9%22/%3E%3Cpolygon%20points%3D%2260%2C230%20180%2C130%20300%2C230%22%20fill%3D%22%231e293b%22/%3E%3Cpolygon%20points%3D%22260%2C230%20380%2C110%20500%2C230%22%20fill%3D%22%230f172a%22/%3E%3Crect%20y%3D%22230%22%20width%3D%22600%22%20height%3D%22190%22%20fill%3D%22url%28%23water%29%22/%3E%3Cellipse%20cx%3D%22300%22%20cy%3D%22270%22%20rx%3D%2245%22%20ry%3D%2212%22%20fill%3D%22%23fef08a%22%20opacity%3D%220.4%22/%3E%3Cellipse%20cx%3D%22300%22%20cy%3D%22310%22%20rx%3D%2235%22%20ry%3D%227%22%20fill%3D%22%23fef08a%22%20opacity%3D%220.25%22/%3E%3C/svg%3E', 'storm': 'data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22420%22%20viewBox%3D%220%200%20600%20420%22%3E%3Crect%20width%3D%22600%22%20height%3D%22420%22%20fill%3D%22%2309090b%22/%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22stormSky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2318181b%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%233f3f46%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22600%22%20height%3D%22220%22%20fill%3D%22url%28%23stormSky%29%22/%3E%3Cpolygon%20points%3D%22280%2C30%20260%2C110%20300%2C105%20270%2C190%22%20stroke%3D%22%23fef08a%22%20stroke-width%3D%224%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M0%2C240%20Q100%2C160%20200%2C220%20T400%2C200%20T600%2C240%20L600%2C420%20L0%2C420%20Z%22%20fill%3D%22%230284c7%22/%3E%3Cpath%20d%3D%22M0%2C270%20Q120%2C200%20240%2C260%20T480%2C240%20T600%2C280%20L600%2C420%20L0%2C420%20Z%22%20fill%3D%22%230369a1%22/%3E%3Cpath%20d%3D%22M0%2C310%20Q140%2C250%20280%2C300%20T560%2C290%20T600%2C330%20L600%2C420%20L0%2C420%20Z%22%20fill%3D%22%23075985%22/%3E%3C/svg%3E', 'sun': 'data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22420%22%20viewBox%3D%220%200%20600%20420%22%3E%3Crect%20width%3D%22600%22%20height%3D%22420%22%20fill%3D%22%23431407%22/%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22sunSky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%237c2d12%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23ea580c%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23fef08a%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22600%22%20height%3D%22280%22%20fill%3D%22url%28%23sunSky%29%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22240%22%20r%3D%2275%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.95%22/%3E%3Cpath%20d%3D%22M0%2C280%20Q150%2C250%20300%2C280%20T600%2C280%20L600%2C420%20L0%2C420%20Z%22%20fill%3D%22%23713f12%22/%3E%3Cpath%20d%3D%22M0%2C320%20Q200%2C290%20400%2C320%20T600%2C330%20L600%2C420%20L0%2C420%20Z%22%20fill%3D%22%23451a03%22/%3E%3C/svg%3E', 'forest': 'data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22420%22%20viewBox%3D%220%200%20600%20420%22%3E%3Crect%20width%3D%22600%22%20height%3D%22420%22%20fill%3D%22%23064e3b%22/%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22fog%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23047857%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23a7f3d0%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22600%22%20height%3D%22220%22%20fill%3D%22url%28%23fog%29%22/%3E%3Cpolygon%20points%3D%22100%2C220%20150%2C110%20200%2C220%22%20fill%3D%22%23065f46%22%20opacity%3D%220.8%22/%3E%3Cpolygon%20points%3D%22220%2C220%20280%2C90%20340%2C220%22%20fill%3D%22%23064e3b%22/%3E%3Cpolygon%20points%3D%22360%2C220%20420%2C100%20480%2C220%22%20fill%3D%22%23065f46%22%20opacity%3D%220.85%22/%3E%3Crect%20y%3D%22220%22%20width%3D%22600%22%20height%3D%22200%22%20fill%3D%22%23022c22%22/%3E%3Crect%20y%3D%22210%22%20width%3D%22600%22%20height%3D%2250%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.2%22/%3E%3C/svg%3E', 'flower': 'data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22420%22%20viewBox%3D%220%200%20600%20420%22%3E%3Crect%20width%3D%22600%22%20height%3D%22420%22%20fill%3D%22%231e3a8a%22/%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22flowerSky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2338bdf8%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23fef08a%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22600%22%20height%3D%22240%22%20fill%3D%22url%28%23flowerSky%29%22/%3E%3Crect%20y%3D%22240%22%20width%3D%22600%22%20height%3D%22180%22%20fill%3D%22%2315803d%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22260%22%20r%3D%2230%22%20fill%3D%22%23713f12%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22220%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22300%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22260%22%20cy%3D%22260%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22340%22%20cy%3D%22260%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22272%22%20cy%3D%22232%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22328%22%20cy%3D%22288%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22272%22%20cy%3D%22288%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3Ccircle%20cx%3D%22328%22%20cy%3D%22232%22%20r%3D%2214%22%20fill%3D%22%23eab308%22/%3E%3C/svg%3E', 'tree': 'data:image/svg+xml;utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22600%22%20height%3D%22420%22%20viewBox%3D%220%200%20600%20420%22%3E%3Crect%20width%3D%22600%22%20height%3D%22420%22%20fill%3D%22%231c1917%22/%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22treeSky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23292524%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23e7e5e4%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22600%22%20height%3D%22300%22%20fill%3D%22url%28%23treeSky%29%22/%3E%3Cpolygon%20points%3D%2240%2C420%20180%2C240%20320%2C420%22%20fill%3D%22%2344403c%22/%3E%3Cpath%20d%3D%22M190%2C260%20Q180%2C200%20230%2C160%20Q200%2C140%20240%2C110%22%20stroke%3D%22%23292524%22%20stroke-width%3D%2214%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22/%3E%3Cellipse%20cx%3D%22250%22%20cy%3D%22110%22%20rx%3D%2250%22%20ry%3D%2225%22%20fill%3D%22%23166534%22/%3E%3Cellipse%20cx%3D%22220%22%20cy%3D%22150%22%20rx%3D%2245%22%20ry%3D%2222%22%20fill%3D%22%2315803d%22/%3E%3Cellipse%20cx%3D%22280%22%20cy%3D%22165%22%20rx%3D%2240%22%20ry%3D%2220%22%20fill%3D%22%2314532d%22/%3E%3C/svg%3E'};
 
   function initOrResizeDoodleCanvas() {
     const canvas = document.getElementById('doodle-canvas');
@@ -2002,7 +1994,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
 
     // Check if resize needed
     if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
-      // Backup current image if exists
       let savedImg = null;
       if (state.doodle.history.length > 0 && state.doodle.historyIndex >= 0) {
         savedImg = state.doodle.history[state.doodle.historyIndex];
@@ -2044,7 +2035,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         state.doodle.lastX = pos.x;
         state.doodle.lastY = pos.y;
 
-        // Draw dot on click/tap
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, state.doodle.brushSize / 2, 0, Math.PI * 2);
         ctx.fillStyle = state.doodle.brushMode === 'eraser' 
@@ -2077,7 +2067,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         state.doodle.isDrawing = false;
         try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
         saveDoodleHistory();
-        renderComparisonViewport();
       };
 
       canvas.addEventListener('pointerup', endDrawing);
@@ -2116,7 +2105,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     if (!canvas) return;
 
     const dataUrl = canvas.toDataURL('image/png');
-    // Truncate forward history if any
     if (state.doodle.historyIndex < state.doodle.history.length - 1) {
       state.doodle.history = state.doodle.history.slice(0, state.doodle.historyIndex + 1);
     }
@@ -2143,7 +2131,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     img.onload = () => {
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
-      renderComparisonViewport();
     };
     img.src = prevData;
     showToast('↩️ 已復原上一步');
@@ -2153,7 +2140,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     if (!confirm('確定要清空畫布重新繪製嗎？')) return;
     fillCanvasBackground();
     saveDoodleHistory();
-    renderComparisonViewport();
     showToast('🗑️ 畫布已清空');
   }
 
@@ -2186,11 +2172,9 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         const cw = canvas.width / (window.devicePixelRatio || 1);
         const ch = canvas.height / (window.devicePixelRatio || 1);
 
-        // Fill background
         ctx.fillStyle = state.doodle.bgColor === 'grid' ? '#ffffff' : state.doodle.bgColor;
         ctx.fillRect(0, 0, cw, ch);
 
-        // Compute aspect ratio fit
         const scale = Math.min(cw / img.width, ch / img.height);
         const dw = img.width * scale;
         const dh = img.height * scale;
@@ -2199,79 +2183,17 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
 
         ctx.drawImage(img, dx, dy, dw, dh);
         saveDoodleHistory();
-        renderComparisonViewport();
-        showToast('📷 照片已載入畫布！您可以在上方進行塗鴉、標註或比對。');
+        showToast('📷 照片已載入畫布！您可以在上方進行塗鴉或標註。');
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
 
-  // 15.1 上網找相似圖片 (Google Lens & Bing)
-  function searchSimilarOnline(engine) {
-    const canvas = state.doodle.canvas;
-    if (!canvas) return;
-
-    // 1. Copy image to clipboard if supported
-    if (navigator.clipboard && window.ClipboardItem && canvas.toBlob) {
-      canvas.toBlob(blob => {
-        if (blob) {
-          try {
-            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
-              console.log('Image copied to clipboard successfully');
-            }).catch(() => {});
-          } catch (e) {}
-        }
-      }, 'image/png');
-    }
-
-    // 2. Download image file so mobile phone users have it ready in album
-    const link = document.createElement('a');
-    link.download = `emotion_doodle_${Date.now()}.png`;
-    link.href = canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // 3. Open Search Engine
-    if (engine === 'lens') {
-      window.open('https://lens.google.com/', '_blank');
-      showToast('🔍 已開啟 Google 智慧鏡頭！圖片已下載，電腦可按 Ctrl+V 貼上搜尋。');
-    } else if (engine === 'bing') {
-      window.open('https://www.bing.com/visualsearch', '_blank');
-      showToast('🌐 已開啟 Bing 視覺搜尋！可上傳剛剛下載的圖片。');
-    }
-  }
-
-  function shareDoodleImage() {
-    const canvas = state.doodle.canvas;
-    if (!canvas) return;
-
-    if (navigator.canShare && canvas.toBlob) {
-      canvas.toBlob(blob => {
-        const file = new File([blob], 'emotion_doodle.png', { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          navigator.share({
-            files: [file],
-            title: '心靈意象塗鴉',
-            text: '這是我的情緒觀察日記心靈意象塗鴉'
-          }).catch(err => console.log('Share dismissed:', err));
-          return;
-        } else {
-          searchSimilarOnline('lens');
-        }
-      }, 'image/png');
-    } else {
-      searchSimilarOnline('lens');
-    }
-  }
-
-  // 15.2 帶入觀察表 Draft
   function applyDoodleToDraft() {
     const canvas = state.doodle.canvas;
     if (!canvas) return;
 
-    // Compress to efficient JPEG data URL
     const tempCanvas = document.createElement('canvas');
     const maxDim = 800;
     let w = canvas.width / (window.devicePixelRatio || 1);
@@ -2290,248 +2212,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     showToast('✅ 已將此畫作帶入當前情緒觀察表！');
   }
 
-  // 15.3 圖片相似度深度比對工作台 (Image Similarity Comparator)
-  function renderComparisonViewport() {
-    const container = document.getElementById('compare-viewport-container');
-    const scoreBoard = document.getElementById('compare-score-board');
-    if (!container) return;
-
-    const doodleCanvas = state.doodle.canvas;
-    if (!doodleCanvas) return;
-
-    const doodleUrl = doodleCanvas.toDataURL('image/png');
-
-    // Default reference image if not loaded
-    if (!state.doodle.refImageSrc) {
-      state.doodle.refImageSrc = ARCHETYPES_DATA['lake'];
-    }
-
-    const refUrl = state.doodle.refImageSrc;
-    const mode = state.doodle.compareMode || 'curtain';
-
-    if (mode === 'side') {
-      container.innerHTML = `
-        <div class="compare-side-container">
-          <div class="compare-side-item">
-            <img src="${doodleUrl}" alt="我的塗鴉/照片">
-            <span class="compare-side-label">🎨 我的塗鴉/照片</span>
-          </div>
-          <div class="compare-side-item">
-            <img src="${refUrl}" alt="對照圖">
-            <span class="compare-side-label">🌐 網路/參考對照圖</span>
-          </div>
-        </div>
-      `;
-    } else if (mode === 'overlay') {
-      container.innerHTML = `
-        <div class="overlay-container">
-          <img src="${refUrl}" class="overlay-img-base" alt="對照圖">
-          <img src="${doodleUrl}" class="overlay-img-top" id="overlay-top-img" style="opacity:${state.doodle.overlayAlpha};" alt="我的塗鴉">
-          <div style="position:absolute; bottom:10px; left:10px; right:10px; background:rgba(25,20,40,0.85); backdrop-filter:blur(6px); padding:8px 12px; border-radius:10px; display:flex; align-items:center; gap:10px; z-index:10;">
-            <span style="font-size:11px; color:#c4b5fd; white-space:nowrap;">對照透明度</span>
-            <input type="range" id="compare-alpha-slider" min="0" max="1" step="0.02" value="${state.doodle.overlayAlpha}" class="neumo-slider" style="flex:1;">
-            <span id="compare-alpha-val" style="font-size:11px; color:#ffffff; width:36px; text-align:right;">${Math.round(state.doodle.overlayAlpha * 100)}%</span>
-          </div>
-        </div>
-      `;
-
-      const alphaSlider = document.getElementById('compare-alpha-slider');
-      if (alphaSlider) {
-        alphaSlider.addEventListener('input', (e) => {
-          const val = parseFloat(e.target.value);
-          state.doodle.overlayAlpha = val;
-          document.getElementById('compare-alpha-val').innerText = `${Math.round(val * 100)}%`;
-          const topImg = document.getElementById('overlay-top-img');
-          if (topImg) topImg.style.opacity = val;
-        });
-      }
-    } else {
-      // Curtain mode (Default)
-      const ratio = state.doodle.curtainRatio || 0.5;
-      const pct = Math.round(ratio * 100);
-      container.innerHTML = `
-        <div class="curtain-slider-container" id="curtain-slider-box">
-          <img src="${refUrl}" class="curtain-img-under" alt="對照圖">
-          <div class="curtain-img-over-wrap" id="curtain-over-wrap" style="width:${pct}%;">
-            <img src="${doodleUrl}" class="curtain-img-over" id="curtain-over-img" alt="我的塗鴉">
-          </div>
-          <div class="curtain-handle-line" id="curtain-handle" style="left:${pct}%;">
-            <div class="curtain-handle-knob">↔</div>
-          </div>
-          <div style="position:absolute; top:8px; left:8px; background:rgba(15,10,30,0.8); color:#c4b5fd; font-size:10px; padding:2px 6px; border-radius:4px; pointer-events:none; z-index:6;">
-            🎨 我的塗鴉
-          </div>
-          <div style="position:absolute; top:8px; right:8px; background:rgba(15,10,30,0.8); color:#86efac; font-size:10px; padding:2px 6px; border-radius:4px; pointer-events:none; z-index:6;">
-            🌐 對照圖
-          </div>
-        </div>
-      `;
-
-      // Set width of curtain-over-img to match container width
-      const cBox = document.getElementById('curtain-slider-box');
-      const overImg = document.getElementById('curtain-over-img');
-      if (cBox && overImg) {
-        overImg.style.width = `${cBox.clientWidth}px`;
-      }
-
-      // Attach handle dragging events
-      attachCurtainDragEvents(container);
-    }
-
-    // Calculate algorithmic similarity
-    calculateVisualSimilarity(doodleUrl, refUrl);
-  }
-
-  function attachCurtainDragEvents(container) {
-    const handle = document.getElementById('curtain-handle');
-    const overWrap = document.getElementById('curtain-over-wrap');
-    if (!handle || !overWrap) return;
-
-    let isDragging = false;
-
-    const updateRatio = (clientX) => {
-      const rect = container.getBoundingClientRect();
-      let ratio = (clientX - rect.left) / rect.width;
-      ratio = Math.max(0.04, Math.min(0.96, ratio));
-      state.doodle.curtainRatio = ratio;
-      const pct = `${ratio * 100}%`;
-      overWrap.style.width = pct;
-      handle.style.left = pct;
-    };
-
-    handle.addEventListener('pointerdown', (e) => {
-      isDragging = true;
-      handle.setPointerCapture(e.pointerId);
-    });
-
-    container.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-      updateRatio(e.clientX);
-    });
-
-    const stopDrag = (e) => {
-      if (isDragging) {
-        isDragging = false;
-        try { handle.releasePointerCapture(e.pointerId); } catch (err) {}
-      }
-    };
-
-    container.addEventListener('pointerup', stopDrag);
-    container.addEventListener('pointercancel', stopDrag);
-  }
-
-  // 15.4 智慧特徵與色彩相似度演算法 (Pure Client-side Canvas)
-  function calculateVisualSimilarity(urlA, urlB) {
-    const imgA = new Image();
-    const imgB = new Image();
-    let loaded = 0;
-
-    const onBothLoaded = () => {
-      try {
-        const c1 = document.createElement('canvas');
-        const c2 = document.createElement('canvas');
-        c1.width = 64; c1.height = 64;
-        c2.width = 64; c2.height = 64;
-        const ctx1 = c1.getContext('2d');
-        const ctx2 = c2.getContext('2d');
-
-        ctx1.drawImage(imgA, 0, 0, 64, 64);
-        ctx2.drawImage(imgB, 0, 0, 64, 64);
-
-        const data1 = ctx1.getImageData(0, 0, 64, 64).data;
-        const data2 = ctx2.getImageData(0, 0, 64, 64).data;
-
-        // 1. Color Histogram (64 bins: 4x4x4 RGB)
-        const hist1 = new Array(64).fill(0);
-        const hist2 = new Array(64).fill(0);
-        let count = 0;
-
-        // Grayscale pixels for structural aHash
-        const gray1 = [];
-        const gray2 = [];
-        let warmCount1 = 0, warmCount2 = 0;
-
-        for (let i = 0; i < data1.length; i += 4) {
-          const r1 = data1[i], g1 = data1[i+1], b1 = data1[i+2];
-          const r2 = data2[i], g2 = data2[i+1], b2 = data2[i+2];
-
-          const bin1 = (Math.floor(r1 / 64) << 4) | (Math.floor(g1 / 64) << 2) | Math.floor(b1 / 64);
-          const bin2 = (Math.floor(r2 / 64) << 4) | (Math.floor(g2 / 64) << 2) | Math.floor(b2 / 64);
-          hist1[bin1]++;
-          hist2[bin2]++;
-          count++;
-
-          if (r1 > b1 + 10) warmCount1++;
-          if (r2 > b2 + 10) warmCount2++;
-
-          // Downsample to 8x8 for aHash
-          const px = (i / 4) % 64;
-          const py = Math.floor((i / 4) / 64);
-          if (px % 8 === 0 && py % 8 === 0) {
-            gray1.push(0.299 * r1 + 0.587 * g1 + 0.114 * b1);
-            gray2.push(0.299 * r2 + 0.587 * g2 + 0.114 * b2);
-          }
-        }
-
-        // Color match percentage
-        let colorIntersect = 0;
-        for (let b = 0; b < 64; b++) {
-          colorIntersect += Math.min(hist1[b] / count, hist2[b] / count);
-        }
-        const colorMatch = Math.min(100, Math.max(10, Math.round(colorIntersect * 100)));
-
-        // aHash structural match percentage
-        const avg1 = gray1.reduce((a, b) => a + b, 0) / gray1.length;
-        const avg2 = gray2.reduce((a, b) => a + b, 0) / gray2.length;
-        let matchBits = 0;
-        for (let k = 0; k < gray1.length; k++) {
-          const bit1 = gray1[k] >= avg1 ? 1 : 0;
-          const bit2 = gray2[k] >= avg2 ? 1 : 0;
-          if (bit1 === bit2) matchBits++;
-        }
-        const structMatch = Math.min(100, Math.max(10, Math.round((matchBits / gray1.length) * 100)));
-
-        // Overall Weighted Match
-        const overall = Math.round(structMatch * 0.52 + colorMatch * 0.48);
-
-        // Update score board
-        const mOverall = document.getElementById('metric-overall');
-        const mStruct = document.getElementById('metric-structure');
-        const mColor = document.getElementById('metric-color');
-        const mInsight = document.getElementById('compare-insight-box');
-
-        if (mOverall) mOverall.innerText = `${overall}%`;
-        if (mStruct) mStruct.innerText = `${structMatch}%`;
-        if (mColor) mColor.innerText = `${colorMatch}%`;
-
-        let insightText = '';
-        if (overall >= 75) {
-          insightText = `✨ <b>高度視覺共鳴（${overall}%）：</b>塗鴉在輪廓結構與色彩韻律上與對照意象具備強烈默契，流露出心靈深處對該境界的深刻投射與平靜整合。`;
-        } else if (overall >= 50) {
-          insightText = `🌱 <b>中度特徵呼應（${overall}%）：</b>${warmCount1 > warmCount2 ? '塗鴉顯現更多飽和暖色調（紅/橙），反映充沛的情感張力與覺察動力' : '塗鴉偏向深邃冷色調（藍/紫），呈現靜觀沈澱的沉穩氣息'}。`;
-        } else {
-          insightText = `💡 <b>獨特心靈視角（${overall}%）：</b>畫作與對照圖呈現鮮明反差，結構獨樹一格，反映內在感知與客觀境界之間的獨特對話。`;
-        }
-
-        if (mInsight) mInsight.innerHTML = insightText;
-      } catch (err) {
-        console.log('Similarity calc error (likely CORS for external URL):', err);
-        const mInsight = document.getElementById('compare-insight-box');
-        if (mInsight) {
-          mInsight.innerHTML = '💡 外部圖片已成功對照顯示。由於跨網域安全防護，已啟用視覺滑簾即時對比！';
-        }
-      }
-    };
-
-    imgA.crossOrigin = 'anonymous';
-    imgB.crossOrigin = 'anonymous';
-    imgA.onload = () => { loaded++; if (loaded === 2) onBothLoaded(); };
-    imgB.onload = () => { loaded++; if (loaded === 2) onBothLoaded(); };
-    imgA.src = urlA;
-    imgB.src = urlB;
-  }
-
-  // 15.5 查看大圖 Lightbox
   function viewDoodleLightbox(recordId) {
     const rec = state.records.find(r => r.id === recordId);
     if (!rec || !rec.doodle) return;
@@ -2544,15 +2224,12 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         <div style="max-height:60vh; overflow:hidden; border-radius:14px; border:1px solid #dcd7f5; margin-bottom:14px; box-shadow:var(--shadow-neumo-sm);">
           <img src="${rec.doodle}" style="width:100%; height:auto; display:block; object-fit:contain;" alt="大圖">
         </div>
-        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
           <button id="btn-lightbox-download" class="record-action-btn" style="padding:6px 14px; font-size:12.5px;">
-            📥 下載大圖
+            📥 下載大圖到硬碟
           </button>
-          <button id="btn-lightbox-search-lens" class="record-action-btn" style="padding:6px 14px; font-size:12.5px; color:#7c3aed; border-color:#c4b5fd;">
-            🔍 Google 智慧鏡頭搜圖
-          </button>
-          <button id="btn-lightbox-send-doodle" class="record-action-btn" style="padding:6px 14px; font-size:12.5px; color:#10b981; border-color:#a7f3d0;">
-            ⚖️ 送入比對工作台
+          <button id="btn-lightbox-send-doodle" class="record-action-btn" style="padding:6px 14px; font-size:12.5px; color:#5c4eb5; border-color:#c4b5fd;">
+            🎨 送入畫布繼續繪製
           </button>
         </div>
       </div>
@@ -2565,16 +2242,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
       link.download = `emotion_record_${rec.id}.png`;
       link.href = rec.doodle;
       link.click();
-    });
-
-    document.getElementById('btn-lightbox-search-lens').addEventListener('click', () => {
-      // Copy to clipboard & download
-      const link = document.createElement('a');
-      link.download = `emotion_record_${rec.id}.png`;
-      link.href = rec.doodle;
-      link.click();
-      window.open('https://lens.google.com/', '_blank');
-      showToast('🔍 已開啟 Google 智慧鏡頭！');
     });
 
     document.getElementById('btn-lightbox-send-doodle').addEventListener('click', () => {
@@ -2594,15 +2261,123 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         const dh = img.height * scale;
         ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
         saveDoodleHistory();
-        renderComparisonViewport();
-        showToast('⚖️ 已將記錄照片載入塗鴉與比對工作台！');
+        showToast('🎨 已將記錄照片載入塗鴉畫布！');
       };
       img.src = rec.doodle;
     });
   }
 
+  // ============================================================
+  // 16. 操作手冊彈跳視窗 (USER MANUAL MODAL)
+  // ============================================================
+  function showUserManualModal() {
+    const content = `
+      <div style="padding: 10px 4px; text-align: left; max-height: 75vh; overflow-y: auto; font-size: 13.5px; line-height: 1.65; color: #433e66;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; border-bottom:1.5px solid #ebe7f8; padding-bottom:10px;">
+          <span style="font-size:24px;">📖</span>
+          <div>
+            <h3 style="font-size:17px; font-weight:700; color:#433c6e;">情緒觀察表 · 完整使用操作手冊</h3>
+            <div style="font-size:11.5px; color:var(--text-sub);">2026 PEI 第三屆情緒觀察營 · 覺察保溫計畫</div>
+          </div>
+        </div>
 
-  // 14. Event Listeners Setup
+        <div style="background:#f4f2fc; border-radius:12px; padding:12px; margin-bottom:14px; border:1px solid #e2def5;">
+          <div style="font-weight:700; color:#5b4eb5; margin-bottom:4px;">🌸 上師實修核心叮嚀：</div>
+          <div style="font-size:13px; color:#524785;">
+            「核心：不要求做得很多，而是<b>『不要斷』</b>，變成習慣。練久了，面對境界時，就能更絲滑地流水線走完：<b>辨認 ➔ 落地 ➔ 看見真相 ➔ 事件回顧</b>！」
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">📲 0. 手機安裝為獨立 App (PWA 離線使用)</h4>
+          <p>免去商店下載，直接使用手機瀏覽器加入桌面：</p>
+          <ul style="padding-left:18px; margin-top:4px; display:flex; flex-direction:column; gap:4px;">
+            <li><b>🍎 iPhone (Safari)：</b>點擊底部中央「分享」按鈕 ⬆️ ➔ 往下滑選「加入主畫面」➕ ➔ 點右上角「新增」。</li>
+            <li><b>🤖 Android (Chrome)：</b>點右上角「選單」⋮ ➔ 選擇「安裝應用程式」或「加到主畫面」。</li>
+            <li>加入後手機桌面會出現圖示，隨點隨開全螢幕運行，無網路離線亦能照常記錄！</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">📝 1. 填寫情緒觀察表 (12 步驟流水線)</h4>
+          <p>面對境界時，依據結業營叮嚀的流水線順序引導：</p>
+          <ol style="padding-left:18px; margin-top:4px; display:flex; flex-direction:column; gap:5px;">
+            <li><b>步驟 1【觸發點】：</b>那一剎那觸發情緒的一句話、動作、眼神或境。</li>
+            <li><b>步驟 2【身體反應】：</b>察覺生理預警訊號（如心頭一緊、胸悶、咬牙、皺眉），可多選或自訂標籤。</li>
+            <li><b>步驟 3【心裡的話】：</b>大腦第一時間浮現的自動念頭（如「怎麼會這樣？」、「好煩」）。</li>
+            <li><b>步驟 4【情緒類別】：</b>辨認當下心情（緊張、焦慮、憤怒、孤單等共 28 種預設，可自由新增）。</li>
+            <li><b>步驟 5【情緒指數】：</b>滑動評估原始情緒強度（0~100 分）。</li>
+            <li><b>步驟 6【情緒落地】：</b>深呼吸、敲胸、按摩腸胃、腳踩大地等身心落地技巧。</li>
+            <li><b>步驟 7【落地時機】：</b>區分「當下落地」或「事後補救落地」。</li>
+            <li><b>步驟 8【落地後指數】：</b>感受落地後的舒緩分數，系統自動計算舒緩成效。</li>
+            <li><b>步驟 9【好像的事實】：</b>大腦杏仁核腦補的假相（如「他一定在針對我」）。</li>
+            <li><b>步驟 10【確立的事實】：</b>查證事實真相並核對假相錯誤程度（完全錯誤、部分錯誤、符合事實）。</li>
+            <li><b>步驟 11【事件與時間】：</b>將「客觀事件陳述」放在落地後平靜回顧，避免被情緒捲入。</li>
+            <li><b>步驟 12【今日評價】：</b>對自己的肯定、溫柔呵護或觀功念恩。</li>
+          </ol>
+          <div style="font-size:12px; color:#2e7d32; font-weight:600; margin-top:6px; background:#e8f5e9; padding:6px 10px; border-radius:8px;">
+            💡 貼心設計：所有步驟皆設有「略過」按鈕，任何欄位暫時不填亦能直接按下一步儲存！
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">📋 2. 全覽填寫模式 (Quick Form)</h4>
+          <p>在首頁頂部切換「全覽填寫模式」，所有 12 個欄位會整合在單一長頁面中，適合習慣快速點擊標籤與一目了然記錄的學員。</p>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">🎨 3. 心靈塗鴉與照片記錄</h4>
+          <p>下方導航切換至<b>「塗鴉」</b>分頁，支援三種身心意象視覺記錄：</p>
+          <ul style="padding-left:18px; margin-top:4px; display:flex; flex-direction:column; gap:4px;">
+            <li><b>✏️ 自己畫：</b>自由塗鴉表達心情，支援 8 種情緒色彩、筆觸粗細調整、橡皮擦、復原與純白/暖米/星空/格點畫紙切換。</li>
+            <li><b>📷 照相：</b>手機一鍵啟動相機，拍下引發情緒的現場、眼神或景物，即時匯入畫布。</li>
+            <li><b>📁 upload照片：</b>從手機相簿或電腦硬碟選取照片，並在上方塗鴉或重點圈選。</li>
+            <li><b>📋 帶入記錄：</b>點擊「帶入記錄」按鈕，畫作自動壓縮存為當前觀察表記錄的附件！</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">📋 4. 記錄管理與塗鴉檢視</h4>
+          <ul style="padding-left:18px; display:flex; flex-direction:column; gap:4px;">
+            <li><b>關鍵字搜尋：</b>支援搜尋事件、情緒、身體訊號或念頭。</li>
+            <li><b>縮圖查看：</b>有塗鴉/照片的記錄會顯示卡片縮圖，點擊可彈出全螢幕大圖檢視或下載。</li>
+            <li><b>詳情與編輯：</b>隨時可查看完整 12 欄位、重新編輯或刪除。</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">📈 5. 統計分析看板與週/季/月/年總結報告</h4>
+          <ul style="padding-left:18px; display:flex; flex-direction:column; gap:4px;">
+            <li><b>10 大實修關鍵指標：</b>精確統計學習天數、日均張數、情緒分佈百分比、當下落地率、假相錯誤率等（完全對齊營隊簡報第 17 頁與紙本總結表）。</li>
+            <li><b>雙折線趨勢圖 (Line Chart)：</b>紫色折線呈現落地前原始情緒，綠色折線呈現落地後舒緩，色帶寬度即為每次落地的轉化舒緩成效。</li>
+            <li><b>週/季/月/年總結報告卡片：</b>自動彙整身心慣性、近期自我評價反思，並支援「一鍵複製」與「Discord 頻道推播」！</li>
+            <li><b>🌱 本期總結期許：</b>在總結卡片底部可填寫給自己的期許話語（如「積極的醒過來」），自動保存並納入總結。</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:14.5px; font-weight:700; color:#7c3aed; margin-bottom:6px;">💾 6. 硬碟自主備份與 Excel 匯出 (100% 隱私)</h4>
+          <ul style="padding-left:18px; display:flex; flex-direction:column; gap:4px;">
+            <li><b>下載 JSON 備份檔：</b>將所有日記、自訂標籤與總結期許打包下載至手機或電腦硬碟。</li>
+            <li><b>從硬碟還原備份：</b>更換手機或電腦時，選取 JSON 檔案即可瞬間無痛還原。</li>
+            <li><b>一鍵寫入 backups/ 目錄：</b>電腦端搭配微型伺服器，可直接將備份自動寫入專屬資料夾。</li>
+            <li><b>匯出綠色 Excel (.xlsx)：</b>一鍵匯出符合營隊標準的統計總覽與 12 欄位詳細明細試算表。</li>
+            <li><b>詞庫標籤管理：</b>在「資料」分頁可檢視、刪除或自訂身體反應、念頭、情緒與落地標籤。</li>
+          </ul>
+        </div>
+
+        <div style="text-align:center; padding:12px 0 4px; border-top:1px dashed #dcd8f0;">
+          <button class="btn-primary" onclick="closeModal()" style="padding:8px 24px; font-size:13.5px;">
+            ✓ 我明白了，開始實修
+          </button>
+        </div>
+      </div>
+    `;
+    openModal(content);
+  }
+
+
+    // 14. Event Listeners Setup
   function initEventListeners() {
     // Dock Navigation
     document.querySelectorAll('.dock-item').forEach(item => {
@@ -2845,8 +2620,7 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     });
 
     // Modal Close
-    // 15.6 Doodle & Visual Search Event Listeners
-    // Tools: Pen / Eraser / Undo / Clear / Download
+    // 15.6 Doodle Event Listeners (Tools: Pen / Eraser / Undo / Clear / Download)
     const toolPen = document.getElementById('tool-pen');
     const toolEraser = document.getElementById('tool-eraser');
     const toolUndo = document.getElementById('tool-undo');
@@ -2921,7 +2695,6 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         state.doodle.bgColor = btn.dataset.bg;
         fillCanvasBackground();
         saveDoodleHistory();
-        renderComparisonViewport();
       });
     });
 
@@ -2956,97 +2729,10 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
       });
     }
 
-    // Search Similar Online buttons
-    const btnOpenSearch = document.getElementById('btn-doodle-open-search');
-    if (btnOpenSearch) {
-      btnOpenSearch.addEventListener('click', () => {
-        document.getElementById('search-similar-card').scrollIntoView({ behavior: 'smooth' });
-      });
-    }
-
-    const btnLens = document.getElementById('btn-search-google-lens');
-    if (btnLens) btnLens.addEventListener('click', () => searchSimilarOnline('lens'));
-
-    const btnBing = document.getElementById('btn-search-bing');
-    if (btnBing) btnBing.addEventListener('click', () => searchSimilarOnline('bing'));
-
-    const btnShare = document.getElementById('btn-share-image');
-    if (btnShare) btnShare.addEventListener('click', shareDoodleImage);
-
     // Apply doodle to draft
     const btnToDraft = document.getElementById('btn-doodle-to-draft');
     if (btnToDraft) {
       btnToDraft.addEventListener('click', applyDoodleToDraft);
-    }
-
-    // Comparison Studio controls
-    const btnOpenCompare = document.getElementById('btn-doodle-open-compare');
-    if (btnOpenCompare) {
-      btnOpenCompare.addEventListener('click', () => {
-        document.getElementById('compare-studio-card').scrollIntoView({ behavior: 'smooth' });
-      });
-    }
-
-    // Mode buttons: curtain / side / overlay
-    ['curtain', 'side', 'overlay'].forEach(m => {
-      const btn = document.getElementById(`btn-comp-mode-${m}`);
-      if (btn) {
-        btn.addEventListener('click', () => {
-          ['curtain', 'side', 'overlay'].forEach(k => {
-            const b = document.getElementById(`btn-comp-mode-${k}`);
-            if (b) b.classList.toggle('active', k === m);
-          });
-          state.doodle.compareMode = m;
-          renderComparisonViewport();
-        });
-      }
-    });
-
-    // Curated Archetype Chips click
-    const chipsBox = document.getElementById('compare-archetypes-chips');
-    if (chipsBox) {
-      chipsBox.addEventListener('click', (e) => {
-        const chip = e.target.closest('.archetype-chip');
-        if (!chip) return;
-        chipsBox.querySelectorAll('.archetype-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        const key = chip.dataset.key;
-        if (ARCHETYPES_DATA[key]) {
-          state.doodle.refImageSrc = ARCHETYPES_DATA[key];
-          renderComparisonViewport();
-        }
-      });
-    }
-
-    // Compare URL loader & Local File Picker
-    const compUrlInput = document.getElementById('compare-url-input');
-    const btnLoadCompUrl = document.getElementById('btn-load-compare-url');
-    if (btnLoadCompUrl && compUrlInput) {
-      btnLoadCompUrl.addEventListener('click', () => {
-        const val = compUrlInput.value.trim();
-        if (val) {
-          state.doodle.refImageSrc = val;
-          renderComparisonViewport();
-          showToast('🌐 已載入網路對照圖片！');
-        }
-      });
-    }
-
-    const btnUploadCompRef = document.getElementById('btn-upload-compare-ref');
-    const compRefFileInput = document.getElementById('compare-ref-file-input');
-    if (btnUploadCompRef && compRefFileInput) {
-      btnUploadCompRef.addEventListener('click', () => compRefFileInput.click());
-      compRefFileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            state.doodle.refImageSrc = evt.target.result;
-            renderComparisonViewport();
-            showToast('📁 已載入本機參考對照圖！');
-          };
-          reader.readAsDataURL(e.target.files[0]);
-        }
-      });
     }
 
     // Quick Form Doodle integration
@@ -3101,6 +2787,15 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
       });
     }
 
+    // User Manual Modal listeners
+    const btnHeaderManual = document.getElementById('btn-header-manual');
+    if (btnHeaderManual) {
+      btnHeaderManual.addEventListener('click', showUserManualModal);
+    }
+    const btnShowManual = document.getElementById('btn-show-user-manual');
+    if (btnShowManual) {
+      btnShowManual.addEventListener('click', showUserManualModal);
+    }
 
         document.getElementById('modal-close-btn').addEventListener('click', closeModal);
     document.getElementById('general-modal').addEventListener('click', (e) => {
