@@ -215,11 +215,26 @@ def run_tests():
             page.mouse.move(cbox["x"] + 200, cbox["y"] + 200)
             page.mouse.up()
             log_test("7-2", "自己畫：觸控/滑鼠塗鴉、色彩盤切換驗證成功")
-    
-            # 帶入觀察表
+
+            # 7-3. 塗鴉畫布一鍵多管道分享檢驗 (Doodle Share Modal)
+            page.locator("#btn-doodle-share").click()
+            time.sleep(0.5)
+            share_modal = page.locator("#general-modal")
+            assert share_modal.is_visible(), "點擊「分享」後應彈出分享選單"
+            assert "分享心靈塗鴉／照片" in share_modal.inner_text()
+            assert page.locator("#btn-share-channel-native").is_visible(), "原生分享按鈕應可見"
+            assert page.locator("#btn-share-channel-copy").is_visible(), "複製圖片按鈕應可見"
+            assert page.locator("#btn-share-channel-discord").is_visible(), "Discord 推播按鈕應可見"
+            assert page.locator("#btn-share-channel-download").is_visible(), "原圖下載按鈕應可見"
+            page.screenshot(path=os.path.join(SCREENSHOT_DIR, "11_doodle_share_modal.png"))
+            page.locator(".modal-close-btn").click()
+            time.sleep(0.3)
+            log_test("7-3", "塗鴉畫布一鍵多管道分享 (手機系統分享 / 剪貼簿 / Discord / 下載) 驗證成功")
+
+            # 7-4. 帶入觀察表
             page.locator("#btn-doodle-to-draft").click()
             time.sleep(0.4)
-            log_test("7-3", "「帶入記錄」按鈕成功將塗鴉壓縮轉存為觀察表記錄附件")
+            log_test("7-4", "「帶入記錄」按鈕成功將塗鴉壓縮轉存為觀察表記錄附件")
 
             # 8. 操作手冊彈出檢驗
             page.locator("#btn-header-manual").click()

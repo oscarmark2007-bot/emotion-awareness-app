@@ -250,20 +250,23 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <div>
                 <h2 style="font-size: 18px; font-weight: 700; color: #433c6e; display: flex; align-items: center; gap: 6px;">
-                  🎨 <span>心靈塗鴉與視覺比對</span>
+                  🎨 <span>心靈塗鴉畫布</span>
                 </h2>
                 <p style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">
-                  自己畫 · 照片 · 照相 · 上網找相似 · 深度比對
+                  自己畫 · 照片 · 照相 · 標註心靈足跡 · 一鍵多管道分享
                 </p>
               </div>
               <div style="display: flex; gap: 6px;">
+                <button id="btn-doodle-share" class="record-action-btn" style="padding: 6px 12px; font-size: 12px; color: #0284c7; border-color: #bae6fd; font-weight: 600;" title="分享塗鴉／照片至社群、剪貼簿或 Discord">
+                  📤 分享
+                </button>
                 <button id="btn-doodle-to-draft" class="record-action-btn" style="padding: 6px 12px; font-size: 12px; color: #5c4eb5; border-color: #beb5f5; font-weight: 600;" title="將這張畫作帶入當前觀察表記錄">
                   📋 帶入記錄
                 </button>
               </div>
             </div>
 
-            <!-- 5 Quick Media Action Buttons -->
+            <!-- 3 Quick Media Action Buttons -->
             <div class="doodle-action-row">
               <button id="btn-doodle-draw-mode" class="doodle-action-pill active">
                 ✏️ 自己畫
@@ -273,12 +276,6 @@
               </button>
               <button id="btn-doodle-trigger-upload" class="doodle-action-pill">
                 📁 upload照片
-              </button>
-              <button id="btn-doodle-open-search" class="doodle-action-pill" style="border-color: #8b5cf6; color: #7c3aed;">
-                🔍 上網找相似
-              </button>
-              <button id="btn-doodle-open-compare" class="doodle-action-pill" style="border-color: #10b981; color: #059669;">
-                ⚖️ 圖片比對
               </button>
             </div>
           </div>
@@ -305,6 +302,7 @@
                 </div>
                 <div style="display: flex; gap: 6px;">
                   <button id="tool-download" class="tool-btn" style="color: var(--primary);" title="下載圖片到硬碟">💾 下載</button>
+                  <button id="tool-share" class="tool-btn" style="color: #0284c7;" title="分享這張塗鴉至社群或剪貼簿">📤 分享</button>
                 </div>
               </div>
 

@@ -2212,6 +2212,201 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     showToast('✅ 已將此畫作帶入當前情緒觀察表！');
   }
 
+  function dataURLToBlob(dataurl) {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  }
+
+  function openDoodleShareModal(imageSrcOrCanvas, titleText = '我的心靈覺察塗鴉') {
+    let dataUrl = '';
+    if (imageSrcOrCanvas instanceof HTMLCanvasElement) {
+      dataUrl = imageSrcOrCanvas.toDataURL('image/png');
+    } else if (typeof imageSrcOrCanvas === 'string') {
+      dataUrl = imageSrcOrCanvas;
+    } else if (state.doodle.canvas) {
+      dataUrl = state.doodle.canvas.toDataURL('image/png');
+    }
+
+    if (!dataUrl) {
+      showToast('⚠️ 尚未有塗鴉或圖片可供分享');
+      return;
+    }
+
+    const isDiscordReady = !!state.discordWebhook;
+
+    const content = `
+      <div style="text-align: left; padding: 4px 2px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #e2ddf7; padding-bottom: 8px;">
+          <h3 style="font-size: 16px; font-weight: 700; color: #433c6e; margin: 0; display: flex; align-items: center; gap: 6px;">
+            📤 <span>分享心靈塗鴉／照片</span>
+          </h3>
+        </div>
+
+        <!-- Preview Card -->
+        <div style="text-align: center; margin-bottom: 14px; background: #faf9ff; border: 1px dashed #dcd7f5; border-radius: 12px; padding: 10px;">
+          <img src="${dataUrl}" style="max-height: 170px; max-width: 100%; object-fit: contain; border-radius: 8px; box-shadow: var(--shadow-neumo-sm);" alt="塗鴉預覽">
+          <div style="font-size: 11.5px; color: var(--text-sub); margin-top: 6px;">
+            🌸 覺察時光創作 · 支援手機原生系統分享、剪貼簿與社群推播
+          </div>
+        </div>
+
+        <!-- Action Channel List -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- 1. Native Mobile / Web Share -->
+          <button id="btn-share-channel-native" class="record-action-btn" style="width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 14px; background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%); border-color: #beb5f5;">
+            <span style="font-size: 22px;">📱</span>
+            <div style="text-align: left;">
+              <div style="font-weight: 700; color: #433c6e; font-size: 13.5px;">手機系統分享 (LINE / 社群 / AirDrop)</div>
+              <div style="font-size: 11px; color: var(--text-sub);">呼叫手機原生分享面板，直接傳送圖片至通訊軟體或群組</div>
+            </div>
+          </button>
+
+          <!-- 2. Copy Image to Clipboard -->
+          <button id="btn-share-channel-copy" class="record-action-btn" style="width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 14px;">
+            <span style="font-size: 22px;">📋</span>
+            <div style="text-align: left;">
+              <div style="font-weight: 700; color: #433c6e; font-size: 13.5px;">複製圖片到剪貼簿 (Copy Image)</div>
+              <div style="font-size: 11px; color: var(--text-sub);">複製後可直接在電腦版 LINE、Discord、Messenger 按 Ctrl+V 貼上</div>
+            </div>
+          </button>
+
+          <!-- 3. Push to Discord Webhook -->
+          <button id="btn-share-channel-discord" class="record-action-btn" style="width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 14px; color: #5865f2; border-color: #c7d2fe;">
+            <span style="font-size: 22px;">🤖</span>
+            <div style="text-align: left;">
+              <div style="font-weight: 700; color: #5865f2; font-size: 13.5px;">推播至 Discord 心靈覺察頻道</div>
+              <div style="font-size: 11px; color: var(--text-sub);">${isDiscordReady ? '一鍵發送塗鴉圖片至已綁定的專屬頻道' : '未設定 Webhook (點擊前往設定)'}</div>
+            </div>
+          </button>
+
+          <!-- 4. Download PNG -->
+          <button id="btn-share-channel-download" class="record-action-btn" style="width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 14px; color: #0284c7; border-color: #bae6fd;">
+            <span style="font-size: 22px;">💾</span>
+            <div style="text-align: left;">
+              <div style="font-weight: 700; color: #0284c7; font-size: 13.5px;">下載原圖至本機硬碟 / 相簿</div>
+              <div style="font-size: 11px; color: var(--text-sub);">儲存高畫質 PNG 圖檔到您的設備中</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    `;
+
+    openModal(content);
+
+    const blob = dataURLToBlob(dataUrl);
+
+    // 1. Native Share
+    const btnNative = document.getElementById('btn-share-channel-native');
+    if (btnNative) {
+      btnNative.addEventListener('click', async () => {
+        const file = new File([blob], `mindful_doodle_${Date.now()}.png`, { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              title: titleText,
+              text: '這是我在「情緒觀察表」創作的心靈塗鴉／記錄照片 🌸',
+              files: [file]
+            });
+            showToast('✅ 分享成功！');
+          } catch (err) {
+            if (err.name !== 'AbortError') {
+              showToast('⚠️ 系統分享未完成');
+            }
+          }
+        } else if (navigator.share) {
+          try {
+            await navigator.share({
+              title: titleText,
+              text: '這是我在「情緒觀察表」創作的心靈塗鴉／記錄照片 🌸\n（若通訊軟體未收到圖檔，可使用「複製圖片」直接貼上）'
+            });
+          } catch (err) {
+            // abort
+          }
+        } else {
+          showToast('ℹ️ 當前裝置/瀏覽器不支援原生分享，請使用「複製圖片」或「下載原圖」！');
+        }
+      });
+    }
+
+    // 2. Copy Image
+    const btnCopy = document.getElementById('btn-share-channel-copy');
+    if (btnCopy) {
+      btnCopy.addEventListener('click', async () => {
+        if (navigator.clipboard && window.ClipboardItem) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            showToast('📋 圖片已複製至剪貼簿！可在 LINE 或 Discord 按 Ctrl+V 直接貼上！');
+          } catch (err) {
+            console.warn('Clipboard write error', err);
+            showToast('⚠️ 瀏覽器限制直接寫入圖檔，建議使用「下載原圖」！');
+          }
+        } else {
+          showToast('ℹ️ 瀏覽器未支援圖檔剪貼簿，請使用「下載原圖」！');
+        }
+      });
+    }
+
+    // 3. Discord Webhook Push
+    const btnDiscord = document.getElementById('btn-share-channel-discord');
+    if (btnDiscord) {
+      btnDiscord.addEventListener('click', () => {
+        if (!state.discordWebhook) {
+          if (confirm('尚未設定 Discord Webhook 網址！\n\n是否前往「資料庫與設定」分頁設定？（設定後即可一鍵自動推播圖片至您的 Discord 專屬頻道）')) {
+            closeModal();
+            switchTab('data');
+            const input = document.getElementById('input-discord-webhook');
+            if (input) {
+              input.scrollIntoView({ behavior: 'smooth' });
+              input.focus();
+            }
+          }
+          return;
+        }
+
+        showToast('📤 正在傳送塗鴉至 Discord 頻道...');
+        const formData = new FormData();
+        formData.append('content', `🎨 **【心靈覺察塗鴉／意象照片】**\n來自「情緒觀察表」創作 🌸\n` + (titleText ? `📝 **主旨：** ${titleText}\n` : ''));
+        formData.append('file', blob, `doodle_${Date.now()}.png`);
+
+        fetch(state.discordWebhook, {
+          method: 'POST',
+          body: formData
+        }).then(res => {
+          if (res.ok) {
+            showToast('🎉 已成功將塗鴉發送至 Discord 頻道！');
+          } else {
+            showToast('❌ 發送失敗，請確認 Discord Webhook 網址是否正確。');
+          }
+        }).catch(err => {
+          alert('發送至 Discord 失敗：' + err.message);
+        });
+      });
+    }
+
+    // 4. Download Image
+    const btnDownload = document.getElementById('btn-share-channel-download');
+    if (btnDownload) {
+      btnDownload.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = `emotion_doodle_${new Date().toISOString().slice(0, 10)}_${Date.now().toString(36)}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('💾 塗鴉圖片已下載至硬碟！');
+      });
+    }
+  }
+
   function viewDoodleLightbox(recordId) {
     const rec = state.records.find(r => r.id === recordId);
     if (!rec || !rec.doodle) return;
@@ -2225,6 +2420,9 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
           <img src="${rec.doodle}" style="width:100%; height:auto; display:block; object-fit:contain;" alt="大圖">
         </div>
         <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button id="btn-lightbox-share" class="record-action-btn" style="padding:6px 14px; font-size:12.5px; color:#0284c7; border-color:#bae6fd; font-weight:600;">
+            📤 分享塗鴉
+          </button>
           <button id="btn-lightbox-download" class="record-action-btn" style="padding:6px 14px; font-size:12.5px;">
             📥 下載大圖到硬碟
           </button>
@@ -2236,6 +2434,14 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     `;
 
     openModal(content);
+
+    const btnShare = document.getElementById('btn-lightbox-share');
+    if (btnShare) {
+      btnShare.addEventListener('click', () => {
+        closeModal();
+        openDoodleShareModal(rec.doodle, `觀察記錄心靈意象 #${rec.id.slice(-4)}`);
+      });
+    }
 
     document.getElementById('btn-lightbox-download').addEventListener('click', () => {
       const link = document.createElement('a');
@@ -2333,6 +2539,7 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
             <li><b>📷 照相：</b>手機一鍵啟動相機，拍下引發情緒的現場、眼神或景物，即時匯入畫布。</li>
             <li><b>📁 upload照片：</b>從手機相簿或電腦硬碟選取照片，並在上方塗鴉或重點圈選。</li>
             <li><b>📋 帶入記錄：</b>點擊「帶入記錄」按鈕，畫作自動壓縮存為當前觀察表記錄的附件！</li>
+            <li><b>📤 一鍵多管道分享：</b>支援手機原生系統分享 (LINE/社群/AirDrop)、電腦版複製圖片至剪貼簿 (Ctrl+V)、一鍵推播至 Discord 心靈頻道與原圖下載！</li>
           </ul>
         </div>
 
@@ -2646,6 +2853,11 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     if (toolUndo) toolUndo.addEventListener('click', undoDoodle);
     if (toolClear) toolClear.addEventListener('click', clearDoodleCanvas);
     if (toolDownload) toolDownload.addEventListener('click', downloadDoodlePNG);
+    const toolShare = document.getElementById('tool-share');
+    if (toolShare) toolShare.addEventListener('click', () => openDoodleShareModal());
+
+    const btnDoodleShare = document.getElementById('btn-doodle-share');
+    if (btnDoodleShare) btnDoodleShare.addEventListener('click', () => openDoodleShareModal());
 
     // Brush Size Slider & Preview Dot
     const brushSlider = document.getElementById('doodle-brush-size');
