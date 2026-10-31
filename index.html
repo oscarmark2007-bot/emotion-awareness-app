@@ -197,10 +197,245 @@
                 <textarea id="quick-reflection" class="neumo-textarea" style="min-height:80px;" placeholder="對自己的肯定、溫柔呵護、看到的善意或學習... (可選填)"></textarea>
               </div>
 
+              <!-- Quick Form Doodle Attachment Area -->
+              <div class="quick-doodle-section" style="background: rgba(245, 243, 255, 0.7); border: 1.5px dashed #cfc9f5; border-radius: 14px; padding: 12px; margin-top: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-weight: 600; font-size: 13.5px; color: #5b567c;">🎨 附加心靈塗鴉或照片 (可選)</span>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" id="btn-quick-open-doodle" class="record-action-btn" style="padding: 4px 10px; font-size: 12px; color: #7c3aed; border-color: #c4b5fd;">
+                      🖌️ 前往畫布
+                    </button>
+                    <button type="button" id="btn-quick-camera" class="record-action-btn" style="padding: 4px 10px; font-size: 12px;">
+                      📷 拍照
+                    </button>
+                    <button type="button" id="btn-quick-upload" class="record-action-btn" style="padding: 4px 10px; font-size: 12px;">
+                      📁 照片
+                    </button>
+                  </div>
+                </div>
+                <div id="quick-doodle-preview-box" style="display: none; align-items: center; gap: 12px; background: #ffffff; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                  <img id="quick-doodle-preview-img" src="" alt="塗鴉預覽" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e0f5; cursor: pointer;">
+                  <div style="flex: 1; font-size: 12px; color: var(--text-sub);">
+                    <div style="font-weight: 600; color: #433c6e;">已附加畫作/照片</div>
+                    <div style="color: #10b981; font-size: 11px;">✓ 儲存時將自動保留</div>
+                  </div>
+                  <button type="button" id="btn-quick-remove-doodle" class="record-action-btn" style="padding: 4px 8px; font-size: 11px; color: #ef4444; border-color: #fecaca;">
+                    移除
+                  </button>
+                </div>
+                <div id="quick-doodle-empty-hint" style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 4px 0;">
+                  可隨時繪製情緒意象、拍照或上傳現場照片
+                </div>
+              </div>
+
               <button id="btn-quick-save" class="btn-primary" style="height:52px; font-size:16px;">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 儲存情緒觀察表
               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB: 心靈塗鴉與視覺比對 (DOODLE & VISUAL SEARCH) ================= -->
+      <section id="tab-doodle" class="tab-page" style="display: none;">
+        <div class="doodle-container">
+          <!-- Top Tool Selector & Quick Action Bar -->
+          <div class="doodle-header-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div>
+                <h2 style="font-size: 18px; font-weight: 700; color: #433c6e; display: flex; align-items: center; gap: 6px;">
+                  🎨 <span>心靈塗鴉與視覺比對</span>
+                </h2>
+                <p style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">
+                  自己畫 · 照片 · 照相 · 上網找相似 · 深度比對
+                </p>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button id="btn-doodle-to-draft" class="record-action-btn" style="padding: 6px 12px; font-size: 12px; color: #5c4eb5; border-color: #beb5f5; font-weight: 600;" title="將這張畫作帶入當前觀察表記錄">
+                  📋 帶入記錄
+                </button>
+              </div>
+            </div>
+
+            <!-- 5 Quick Media Action Buttons -->
+            <div class="doodle-action-row">
+              <button id="btn-doodle-draw-mode" class="doodle-action-pill active">
+                ✏️ 自己畫
+              </button>
+              <button id="btn-doodle-trigger-camera" class="doodle-action-pill">
+                📷 照相
+              </button>
+              <button id="btn-doodle-trigger-upload" class="doodle-action-pill">
+                📁 upload照片
+              </button>
+              <button id="btn-doodle-open-search" class="doodle-action-pill" style="border-color: #8b5cf6; color: #7c3aed;">
+                🔍 上網找相似
+              </button>
+              <button id="btn-doodle-open-compare" class="doodle-action-pill" style="border-color: #10b981; color: #059669;">
+                ⚖️ 圖片比對
+              </button>
+            </div>
+          </div>
+
+          <!-- Hidden File Inputs -->
+          <input type="file" id="doodle-camera-input" accept="image/*" capture="environment" style="display: none;">
+          <input type="file" id="doodle-upload-input" accept="image/*" style="display: none;">
+
+          <!-- Canvas Studio Card -->
+          <div class="doodle-canvas-card">
+            <div class="doodle-canvas-wrapper" id="doodle-canvas-wrapper">
+              <canvas id="doodle-canvas"></canvas>
+            </div>
+
+            <!-- Canvas Bottom Quick Toolbar -->
+            <div class="doodle-toolbar">
+              <!-- Row 1: Brush mode, Eraser, Undo, Clear, Save -->
+              <div class="doodle-tool-row">
+                <div class="doodle-btn-group">
+                  <button id="tool-pen" class="tool-btn active" title="畫筆">🖌️ 畫筆</button>
+                  <button id="tool-eraser" class="tool-btn" title="橡皮擦">🧹 橡皮擦</button>
+                  <button id="tool-undo" class="tool-btn" title="復原">↩️ 復原</button>
+                  <button id="tool-clear" class="tool-btn" title="清空畫布">🗑️ 清空</button>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button id="tool-download" class="tool-btn" style="color: var(--primary);" title="下載圖片到硬碟">💾 下載</button>
+                </div>
+              </div>
+
+              <!-- Row 2: Brush Size & Dynamic Preview -->
+              <div class="doodle-slider-row">
+                <span style="font-size: 12px; color: var(--text-sub); white-space: nowrap;">筆觸粗細</span>
+                <input type="range" id="doodle-brush-size" min="2" max="36" value="6" class="neumo-slider" style="flex: 1;">
+                <span id="brush-size-preview" class="brush-size-dot" style="width: 6px; height: 6px; background: #8b5cf6;"></span>
+              </div>
+
+              <!-- Row 3: Colors Palette -->
+              <div class="doodle-color-row">
+                <div class="color-palette-list" id="doodle-palette">
+                  <div class="color-dot active" data-color="#8b5cf6" style="background:#8b5cf6;" title="覺察紫"></div>
+                  <div class="color-dot" data-color="#3b82f6" style="background:#3b82f6;" title="平靜藍"></div>
+                  <div class="color-dot" data-color="#10b981" style="background:#10b981;" title="舒緩綠"></div>
+                  <div class="color-dot" data-color="#f59e0b" style="background:#f59e0b;" title="溫暖黃"></div>
+                  <div class="color-dot" data-color="#f97316" style="background:#f97316;" title="焦慮橙"></div>
+                  <div class="color-dot" data-color="#ef4444" style="background:#ef4444;" title="憤怒紅"></div>
+                  <div class="color-dot" data-color="#1f2937" style="background:#1f2937;" title="沉重黑"></div>
+                  <div class="color-dot" data-color="#ffffff" style="background:#ffffff; border: 1px solid #dcd8f0;" title="純白"></div>
+                </div>
+                <label class="custom-color-btn" title="自訂顏色">
+                  🎨 自選
+                  <input type="color" id="doodle-custom-color" value="#8b5cf6" style="opacity:0; position:absolute; width:1px; height:1px;">
+                </label>
+              </div>
+
+              <!-- Row 4: Background style selector -->
+              <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 4px; padding-top: 8px; border-top: 1px dashed rgba(220, 215, 245, 0.7);">
+                <span style="font-size: 11.5px; color: var(--text-muted);">畫紙底色：</span>
+                <div style="display: flex; gap: 6px;">
+                  <button class="bg-opt-btn active" data-bg="#ffffff">純白紙</button>
+                  <button class="bg-opt-btn" data-bg="#fbf9f4">暖米紙</button>
+                  <button class="bg-opt-btn" data-bg="#1e1b2e">星空黑</button>
+                  <button class="bg-opt-btn" data-bg="grid">格點本</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: 上網找相似 (Online Visual Search & Google Lens) -->
+          <div class="stats-card" id="search-similar-card" style="margin-top: 16px;">
+            <div class="stats-card-title" style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 15px; font-weight: 700; color: #433c6e;">🔍 上網找相似圖片 (以圖搜圖)</span>
+              <span class="badge" style="background:#f3e8ff; color:#7c3aed; font-size:11px; padding:3px 8px; border-radius:8px;">Google 智慧鏡頭</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-sub); margin: 6px 0 12px; line-height: 1.5;">
+              將當前塗鴉或照片傳送到網路上搜尋相似圖像、意象或藝術作品，探索更多心靈共鳴：
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <button id="btn-search-google-lens" class="btn-primary" style="height: 48px; background: linear-gradient(135deg, #7c3aed, #4f46e5); font-size: 14.5px;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 12 12 16 16 12 12 8"></polygon></svg>
+                Google 智慧鏡頭 (Lens) 搜尋相似圖
+              </button>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button id="btn-search-bing" class="record-action-btn" style="height: 42px; font-size: 13px; justify-content: center;">
+                  🌐 Bing 視覺搜尋
+                </button>
+                <button id="btn-share-image" class="record-action-btn" style="height: 42px; font-size: 13px; justify-content: center; color: #5865f2; border-color: #5865f2;">
+                  📤 系統分享搜圖
+                </button>
+              </div>
+
+              <div style="background: #f4f2fb; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #5a5382; line-height: 1.6;">
+                💡 <b>使用小提示：</b><br>
+                1. 點擊按鈕時，App 會自動將畫作<b>複製到剪貼簿</b>並下載一份檔案至硬碟。<br>
+                2. 跳轉到 Google 智慧鏡頭頁面後，電腦可直接按 <b>Ctrl+V</b> 貼上；手機可直接選取剛下載的圖片即可比對！
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: 深度比對工作台 (Image Similarity & Visual Comparator) -->
+          <div class="stats-card" id="compare-studio-card" style="margin-top: 16px;">
+            <div class="stats-card-title" style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 15px; font-weight: 700; color: #433c6e;">⚖️ 視覺相似度比對工作台</span>
+              <span class="badge" style="background:#e0f2fe; color:#0284c7; font-size:11px; padding:3px 8px; border-radius:8px;">比對模式</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-sub); margin: 6px 0 12px; line-height: 1.5;">
+              將您的塗鴉/照片與網路參考圖或意象進行「輪廓結構」與「色彩分佈」深度比對：
+            </p>
+
+            <!-- Reference Image Selector -->
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <input type="text" id="compare-url-input" class="neumo-input" placeholder="貼上網路圖片網址 (https://...) 或選擇下方意象" style="flex:1; height:38px; font-size:12.5px;">
+                <button id="btn-load-compare-url" class="btn-primary" style="height:38px; padding:0 12px; font-size:12px; white-space:nowrap;">載入網址</button>
+                <button id="btn-upload-compare-ref" class="record-action-btn" style="height:38px; padding:0 10px; font-size:12px; white-space:nowrap;">📁 本機選圖</button>
+                <input type="file" id="compare-ref-file-input" accept="image/*" style="display:none;">
+              </div>
+
+              <!-- Curated Archetype Imagery Quick Chips -->
+              <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 6px;">或點選精選心靈意象進行對照：</div>
+              <div class="compare-archetypes-row" id="compare-archetypes-chips">
+                <button class="archetype-chip active" data-key="lake">🌊 寧靜澄澈湖泊</button>
+                <button class="archetype-chip" data-key="storm">⛈️ 狂風巨浪海嘯</button>
+                <button class="archetype-chip" data-key="sun">🌅 破曉晨曦朝陽</button>
+                <button class="archetype-chip" data-key="forest">🌲 迷霧深處原野</button>
+                <button class="archetype-chip" data-key="flower">🌻 綻放向日葵田</button>
+                <button class="archetype-chip" data-key="tree">🪨 挺立磐石孤松</button>
+              </div>
+            </div>
+
+            <!-- Comparison Mode Toggles -->
+            <div class="mode-toggle-bar" style="margin-bottom: 12px;">
+              <div class="mode-toggle-btn active" id="btn-comp-mode-curtain" data-comp="curtain">滑簾窗簾比對</div>
+              <div class="mode-toggle-btn" id="btn-comp-mode-side" data-comp="side">左右雙圖對照</div>
+              <div class="mode-toggle-btn" id="btn-comp-mode-overlay" data-comp="overlay">透明疊加比對</div>
+            </div>
+
+            <!-- Visual Comparison Viewport Container -->
+            <div id="compare-viewport-container" class="compare-viewport">
+              <!-- Dynamically populated comparison views -->
+            </div>
+
+            <!-- Comparison Metric Score Board -->
+            <div id="compare-score-board" class="compare-score-board" style="display: block; margin-top: 14px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align: center;">
+                <div class="score-metric-box">
+                  <div class="score-num" id="metric-overall" style="color: #7c3aed;">--%</div>
+                  <div class="score-label">綜合相似度</div>
+                </div>
+                <div class="score-metric-box">
+                  <div class="score-num" id="metric-structure" style="color: #0284c7;">--%</div>
+                  <div class="score-label">輪廓結構相似</div>
+                </div>
+                <div class="score-metric-box">
+                  <div class="score-num" id="metric-color" style="color: #10b981;">--%</div>
+                  <div class="score-label">色彩色調相似</div>
+                </div>
+              </div>
+              <div id="compare-insight-box" class="compare-insight-text">
+                正在分析塗鴉與對照圖的視覺特徵...
+              </div>
             </div>
           </div>
         </div>
@@ -515,11 +750,16 @@
       </section>
     </main>
 
-    <!-- Bottom Navigation Dock (4 Tabs) -->
+    <!-- Bottom Navigation Dock (5 Tabs) -->
     <nav class="bottom-dock">
       <div class="dock-item active" id="dock-home" data-tab="home">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span>首頁</span>
+      </div>
+
+      <div class="dock-item" id="dock-doodle" data-tab="doodle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+        <span>塗鴉</span>
       </div>
 
       <div class="dock-item" id="dock-records" data-tab="records">

@@ -1209,3 +1209,434 @@ body {
   gap: 8px;
   align-items: flex-start;
 }
+
+/* ============================================================
+   心靈塗鴉與視覺比對 (DOODLE & VISUAL COMPARISON) STYLES
+   ============================================================ */
+
+.doodle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.doodle-header-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-neumo);
+  border: 1px solid var(--border-light);
+}
+
+.doodle-action-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 2px 2px;
+  scrollbar-width: none;
+}
+.doodle-action-row::-webkit-scrollbar {
+  display: none;
+}
+
+.doodle-action-pill {
+  padding: 7px 13px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-light);
+  background: var(--surface-card);
+  color: var(--text-main);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-neumo-sm);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.doodle-action-pill:active {
+  transform: scale(0.96);
+}
+.doodle-action-pill.active {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* Doodle Canvas Card */
+.doodle-canvas-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--shadow-neumo);
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doodle-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-inset);
+  background: #ffffff;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+#doodle-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.doodle-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doodle-tool-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.doodle-btn-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: #fbfaff;
+  color: var(--text-main);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-neumo-sm);
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tool-btn:active {
+  transform: scale(0.95);
+}
+.tool-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 3px 10px var(--primary-glow);
+}
+
+.doodle-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 4px;
+}
+
+.brush-size-dot {
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: width 0.15s, height 0.15s;
+}
+
+.doodle-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.color-palette-list {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.18s, box-shadow 0.18s;
+  position: relative;
+}
+.color-dot.active {
+  transform: scale(1.22);
+  box-shadow: 0 0 0 2.5px #ffffff, 0 0 0 4.5px var(--primary);
+}
+
+.custom-color-btn {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: #f7f6fc;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
+
+.bg-opt-btn {
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: #fbfaff;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-sub);
+  cursor: pointer;
+}
+.bg-opt-btn.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+/* Comparison Studio Styles */
+.compare-archetypes-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 0 6px;
+  scrollbar-width: none;
+}
+.compare-archetypes-row::-webkit-scrollbar {
+  display: none;
+}
+
+.archetype-chip {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+  background: #f8f7fd;
+  color: #4b466b;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-neumo-sm);
+  transition: all 0.15s;
+}
+.archetype-chip:active {
+  transform: scale(0.96);
+}
+.archetype-chip.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.compare-viewport {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-inset);
+  background: #110e1b;
+  user-select: none;
+  touch-action: none;
+}
+
+.compare-side-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  height: 100%;
+  gap: 2px;
+  background: #1e1b2e;
+}
+.compare-side-item {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f0c18;
+}
+.compare-side-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.compare-side-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(20, 15, 35, 0.82);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 5;
+}
+
+/* Curtain Slider */
+.curtain-slider-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.curtain-img-under {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0f0c18;
+}
+.curtain-img-over-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f0c18;
+  border-right: 2.5px solid #ffffff;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.45);
+}
+.curtain-img-over {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  object-fit: contain;
+}
+.curtain-handle-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 40px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ew-resize;
+  z-index: 10;
+  touch-action: none;
+}
+.curtain-handle-knob {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a3e72;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid var(--primary);
+}
+
+/* Alpha Overlay */
+.overlay-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.overlay-img-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0f0c18;
+}
+.overlay-img-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.5;
+  transition: opacity 0.05s ease;
+}
+
+/* Score board */
+.compare-score-board {
+  background: linear-gradient(145deg, #ffffff 0%, #f7f5fd 100%);
+  border: 1px solid #dcd7f5;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.score-metric-box {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 8px 4px;
+}
+.score-num {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.score-label {
+  font-size: 11px;
+  color: var(--text-sub);
+  margin-top: 3px;
+}
+.compare-insight-text {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #f0ebfa;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #493e78;
+  line-height: 1.55;
+}
+
+/* Record Card Doodle Thumbnail */
+.record-doodle-preview {
+  margin-top: 10px;
+  border-top: 1px dashed rgba(220, 215, 245, 0.8);
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.record-doodle-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  border: 1.5px solid #d9d4f5;
+  object-fit: cover;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.15s;
+}
+.record-doodle-thumb:hover {
+  transform: scale(1.05);
+}
