@@ -74,10 +74,11 @@
       isDrawing: false,
       lastX: 0,
       lastY: 0,
-      brushMode: 'pen', // 'pen' | 'eraser'
+      brushMode: 'pen', // 'pen' | 'eraser' | 'stamp'
+      activeStamp: null,
       brushColor: '#8b5cf6',
       brushSize: 6,
-      bgColor: '#ffffff',
+      bgColor: 'human', // 'human' | '#ffffff' | 'grid' | '#fbf9f4' | '#1e1b2e'
       history: [],
       historyIndex: -1
     }
@@ -2029,16 +2030,34 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
       };
 
       canvas.addEventListener('pointerdown', (e) => {
+        const pos = getPos(e);
+
+        // Handle Icon Stamp Mode (Tap to stamp emoji on body or canvas)
+        if (state.doodle.brushMode === 'stamp' && state.doodle.activeStamp) {
+          const fontSize = Math.max(22, Math.min(50, 20 + (state.doodle.brushSize || 6) * 0.9));
+          ctx.save();
+          ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+          ctx.shadowBlur = 6;
+          ctx.font = `${fontSize}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(state.doodle.activeStamp.icon, pos.x, pos.y);
+          ctx.restore();
+
+          saveDoodleHistory();
+          return;
+        }
+
+        // Freehand Draw or Eraser
         state.doodle.isDrawing = true;
         canvas.setPointerCapture(e.pointerId);
-        const pos = getPos(e);
         state.doodle.lastX = pos.x;
         state.doodle.lastY = pos.y;
 
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, state.doodle.brushSize / 2, 0, Math.PI * 2);
         ctx.fillStyle = state.doodle.brushMode === 'eraser' 
-          ? (state.doodle.bgColor === 'grid' ? '#ffffff' : state.doodle.bgColor) 
+          ? (state.doodle.bgColor === 'grid' || state.doodle.bgColor === 'human' ? '#faf8fe' : state.doodle.bgColor) 
           : state.doodle.brushColor;
         ctx.fill();
       });
@@ -2074,6 +2093,97 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     }
   }
 
+  // Draw Zen Human Body Silhouette Map (Inspired by mindfulness body awareness & user sketch)
+  function drawHumanSilhouette(ctx, w, h) {
+    const cx = w / 2;
+    const top = h * 0.05;
+    const th = h * 0.90;
+
+    ctx.save();
+    ctx.strokeStyle = '#9d8ec9';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.fillStyle = 'rgba(238, 233, 254, 0.6)';
+
+    // 1. Head (with soft circular guide)
+    const hrx = th * 0.082;
+    const hry = th * 0.098;
+    const hcy = top + hry;
+    ctx.beginPath();
+    ctx.ellipse(cx, hcy, hrx, hry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // 2. Body contour (Continuous smooth Bézier curves from left neck around to right neck)
+    ctx.beginPath();
+    const neckY = hcy + hry + th * 0.015;
+    const neckW = th * 0.038;
+    ctx.moveTo(cx - neckW, neckY);
+
+    // Left neck to shoulder
+    ctx.quadraticCurveTo(cx - th * 0.10, neckY + th * 0.015, cx - th * 0.17, neckY + th * 0.045);
+    // Left shoulder to elbow
+    ctx.quadraticCurveTo(cx - th * 0.25, neckY + th * 0.11, cx - th * 0.28, neckY + th * 0.18);
+    // Left forearm to wrist/hand
+    ctx.quadraticCurveTo(cx - th * 0.33, neckY + th * 0.23, cx - th * 0.36, neckY + th * 0.28);
+    // Left hand round tip
+    ctx.bezierCurveTo(cx - th * 0.39, neckY + th * 0.31, cx - th * 0.35, neckY + th * 0.35, cx - th * 0.30, neckY + th * 0.32);
+    // Left inner forearm
+    ctx.quadraticCurveTo(cx - th * 0.25, neckY + th * 0.26, cx - th * 0.21, neckY + th * 0.22);
+    // Left armpit to waist
+    ctx.quadraticCurveTo(cx - th * 0.13, neckY + th * 0.21, cx - th * 0.12, neckY + th * 0.32);
+    // Left waist to hip
+    ctx.quadraticCurveTo(cx - th * 0.11, neckY + th * 0.40, cx - th * 0.14, neckY + th * 0.46);
+    // Left hip to knee
+    ctx.quadraticCurveTo(cx - th * 0.16, neckY + th * 0.58, cx - th * 0.18, neckY + th * 0.68);
+    // Left lower leg to foot
+    ctx.quadraticCurveTo(cx - th * 0.20, neckY + th * 0.77, cx - th * 0.21, neckY + th * 0.83);
+    // Left foot round bottom
+    ctx.bezierCurveTo(cx - th * 0.21, neckY + th * 0.86, cx - th * 0.13, neckY + th * 0.86, cx - th * 0.13, neckY + th * 0.83);
+    // Left inner leg to inner knee
+    ctx.quadraticCurveTo(cx - th * 0.13, neckY + th * 0.74, cx - th * 0.11, neckY + th * 0.66);
+    // Left inner thigh to crotch
+    ctx.quadraticCurveTo(cx - th * 0.08, neckY + th * 0.56, cx, neckY + th * 0.51);
+
+    // Right inner thigh
+    ctx.quadraticCurveTo(cx + th * 0.08, neckY + th * 0.56, cx + th * 0.11, neckY + th * 0.66);
+    // Right inner leg
+    ctx.quadraticCurveTo(cx + th * 0.13, neckY + th * 0.74, cx + th * 0.13, neckY + th * 0.83);
+    // Right foot round bottom
+    ctx.bezierCurveTo(cx + th * 0.13, neckY + th * 0.86, cx + th * 0.21, neckY + th * 0.86, cx + th * 0.21, neckY + th * 0.83);
+    // Right lower leg to knee
+    ctx.quadraticCurveTo(cx + th * 0.20, neckY + th * 0.77, cx + th * 0.18, neckY + th * 0.68);
+    // Right knee to hip
+    ctx.quadraticCurveTo(cx + th * 0.16, neckY + th * 0.58, cx + th * 0.14, neckY + th * 0.46);
+    // Right hip to waist
+    ctx.quadraticCurveTo(cx + th * 0.11, neckY + th * 0.40, cx + th * 0.12, neckY + th * 0.32);
+    // Right waist to armpit
+    ctx.quadraticCurveTo(cx + th * 0.13, neckY + th * 0.21, cx + th * 0.21, neckY + th * 0.22);
+    // Right inner forearm
+    ctx.quadraticCurveTo(cx + th * 0.25, neckY + th * 0.26, cx + th * 0.30, neckY + th * 0.32);
+    // Right hand round tip
+    ctx.bezierCurveTo(cx + th * 0.35, neckY + th * 0.35, cx + th * 0.39, neckY + th * 0.31, cx + th * 0.36, neckY + th * 0.28);
+    // Right forearm to elbow
+    ctx.quadraticCurveTo(cx + th * 0.33, neckY + th * 0.23, cx + th * 0.28, neckY + th * 0.18);
+    // Right upper arm to shoulder
+    ctx.quadraticCurveTo(cx + th * 0.25, neckY + th * 0.11, cx + th * 0.17, neckY + th * 0.045);
+    // Right shoulder to neck
+    ctx.quadraticCurveTo(cx + th * 0.10, neckY + th * 0.015, cx + neckW, neckY);
+
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Subtle heart center marker
+    ctx.fillStyle = 'rgba(168, 140, 220, 0.45)';
+    ctx.beginPath();
+    ctx.arc(cx, neckY + th * 0.16, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
   function fillCanvasBackground() {
     const canvas = state.doodle.canvas;
     const ctx = state.doodle.ctx;
@@ -2082,7 +2192,18 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     const w = canvas.width / (window.devicePixelRatio || 1);
     const h = canvas.height / (window.devicePixelRatio || 1);
 
-    if (state.doodle.bgColor === 'grid') {
+    if (state.doodle.bgColor === 'human') {
+      ctx.fillStyle = '#faf8fe';
+      ctx.fillRect(0, 0, w, h);
+      // Soft dotted texture
+      ctx.fillStyle = '#e8e2f8';
+      for (let x = 14; x < w; x += 22) {
+        for (let y = 14; y < h; y += 22) {
+          ctx.fillRect(x, y, 1.3, 1.3);
+        }
+      }
+      drawHumanSilhouette(ctx, w, h);
+    } else if (state.doodle.bgColor === 'grid') {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, w, h);
       ctx.strokeStyle = '#eef0fa';
@@ -2834,9 +2955,16 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     const toolClear = document.getElementById('tool-clear');
     const toolDownload = document.getElementById('tool-download');
 
+    const deselectStamps = () => {
+      state.doodle.activeStamp = null;
+      const paletteList = document.getElementById('doodle-icons-palette');
+      if (paletteList) paletteList.querySelectorAll('.doodle-stamp-btn').forEach(b => b.classList.remove('active'));
+    };
+
     if (toolPen) {
       toolPen.addEventListener('click', () => {
         state.doodle.brushMode = 'pen';
+        deselectStamps();
         toolPen.classList.add('active');
         if (toolEraser) toolEraser.classList.remove('active');
       });
@@ -2845,8 +2973,45 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
     if (toolEraser) {
       toolEraser.addEventListener('click', () => {
         state.doodle.brushMode = 'eraser';
+        deselectStamps();
         toolEraser.classList.add('active');
         if (toolPen) toolPen.classList.remove('active');
+      });
+    }
+
+    const toolInsertHuman = document.getElementById('tool-insert-human');
+    if (toolInsertHuman) {
+      toolInsertHuman.addEventListener('click', () => {
+        const canvas = state.doodle.canvas;
+        const ctx = state.doodle.ctx;
+        if (!canvas || !ctx) return;
+        const w = canvas.width / (window.devicePixelRatio || 1);
+        const h = canvas.height / (window.devicePixelRatio || 1);
+        drawHumanSilhouette(ctx, w, h);
+        saveDoodleHistory();
+        showToast('👤 已在畫布疊加身心人型輪廓！');
+      });
+    }
+
+    // Hook up Awareness Icon Stamps
+    const iconsPalette = document.getElementById('doodle-icons-palette');
+    if (iconsPalette) {
+      iconsPalette.addEventListener('click', (e) => {
+        const btn = e.target.closest('.doodle-stamp-btn');
+        if (!btn) return;
+        const icon = btn.dataset.icon;
+        const name = btn.dataset.name;
+
+        state.doodle.brushMode = 'stamp';
+        state.doodle.activeStamp = { icon, name };
+
+        iconsPalette.querySelectorAll('.doodle-stamp-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (toolPen) toolPen.classList.remove('active');
+        if (toolEraser) toolEraser.classList.remove('active');
+
+        showToast(`✨ 已選取【${icon} ${name}】！輕點畫布/人型相應部位（頭/胸/肩/手/腳）即可蓋章標註。`);
       });
     }
 
@@ -2881,6 +3046,7 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
         dot.classList.add('active');
         state.doodle.brushColor = dot.dataset.color;
         state.doodle.brushMode = 'pen';
+        deselectStamps();
         if (toolPen) toolPen.classList.add('active');
         if (toolEraser) toolEraser.classList.remove('active');
         if (brushDot) brushDot.style.background = state.doodle.brushColor;
@@ -2893,6 +3059,7 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
       customColor.addEventListener('input', (e) => {
         state.doodle.brushColor = e.target.value;
         state.doodle.brushMode = 'pen';
+        deselectStamps();
         if (toolPen) toolPen.classList.add('active');
         if (toolEraser) toolEraser.classList.remove('active');
         if (brushDot) brushDot.style.background = state.doodle.brushColor;
@@ -2935,9 +3102,28 @@ ${reflectionRecords.length > 0 ? `\n📝 近期評價反思（${reflectionRecord
       });
     }
 
+    const btnHumanMode = document.getElementById('btn-doodle-human-mode');
+    if (btnHumanMode) {
+      btnHumanMode.addEventListener('click', () => {
+        document.querySelectorAll('.doodle-action-pill').forEach(p => p.classList.remove('active'));
+        btnHumanMode.classList.add('active');
+        state.doodle.bgColor = 'human';
+        fillCanvasBackground();
+        saveDoodleHistory();
+        document.getElementById('doodle-canvas-wrapper').scrollIntoView({ behavior: 'smooth' });
+        showToast('👤 已載入「身心人型圖」！可點選小 Icon 蓋章或自行塗鴉。');
+      });
+    }
+
     if (btnDrawMode) {
       btnDrawMode.addEventListener('click', () => {
+        document.querySelectorAll('.doodle-action-pill').forEach(p => p.classList.remove('active'));
+        btnDrawMode.classList.add('active');
+        state.doodle.bgColor = '#ffffff';
+        fillCanvasBackground();
+        saveDoodleHistory();
         document.getElementById('doodle-canvas-wrapper').scrollIntoView({ behavior: 'smooth' });
+        showToast('✏️ 已切換為純淨空白畫布！');
       });
     }
 

@@ -250,10 +250,10 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <div>
                 <h2 style="font-size: 18px; font-weight: 700; color: #433c6e; display: flex; align-items: center; gap: 6px;">
-                  🎨 <span>心靈塗鴉畫布</span>
+                  🎨 <span>心靈塗鴉與身體覺察地圖</span>
                 </h2>
                 <p style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">
-                  自己畫 · 照片 · 照相 · 標註心靈足跡 · 一鍵多管道分享
+                  身心人型 · 覺察小Icon蓋章 · 自由塗鴉 · 照片標註
                 </p>
               </div>
               <div style="display: flex; gap: 6px;">
@@ -266,15 +266,18 @@
               </div>
             </div>
 
-            <!-- 3 Quick Media Action Buttons -->
+            <!-- 4 Quick Media Action Buttons -->
             <div class="doodle-action-row">
-              <button id="btn-doodle-draw-mode" class="doodle-action-pill active">
-                ✏️ 自己畫
+              <button id="btn-doodle-human-mode" class="doodle-action-pill active" title="載入身心人型輪廓圖">
+                👤 身心人型
               </button>
-              <button id="btn-doodle-trigger-camera" class="doodle-action-pill">
+              <button id="btn-doodle-draw-mode" class="doodle-action-pill" title="純白空白畫布">
+                ✏️ 空白畫布
+              </button>
+              <button id="btn-doodle-trigger-camera" class="doodle-action-pill" title="拍照匯入畫布">
                 📷 照相
               </button>
-              <button id="btn-doodle-trigger-upload" class="doodle-action-pill">
+              <button id="btn-doodle-trigger-upload" class="doodle-action-pill" title="上傳本機相片">
                 📁 upload照片
               </button>
             </div>
@@ -290,13 +293,72 @@
               <canvas id="doodle-canvas"></canvas>
             </div>
 
+            <!-- Section: 身心覺察小 Icon 貼圖盤 (Stickers / Stamps) -->
+            <div class="doodle-icon-tray-card" id="doodle-icon-tray">
+              <div class="icon-tray-header">
+                <div class="icon-tray-title">
+                  <span>✨ 身心覺察小 Icon</span>
+                  <span class="icon-tray-badge">選用蓋章 · 自行畫</span>
+                </div>
+                <span class="icon-tray-hint">點選 Icon ➔ 輕點人型相應部位（頭/胸/肩/手/腳）蓋章</span>
+              </div>
+              <div class="doodle-icons-list" id="doodle-icons-palette">
+                <button class="doodle-stamp-btn" data-icon="⚡" data-name="閃電" title="⚡ 閃電 (雷電暴衝/理智斷線)">
+                  <span class="stamp-icon">⚡</span><span class="stamp-name">閃電</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="❓" data-name="困惑" title="❓ 困惑 (腦袋問號/不解疑惑)">
+                  <span class="stamp-icon">❓</span><span class="stamp-name">困惑</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🗣️" data-name="吶喊" title="🗣️ 吶喊 (「啊！」大喊/宣洩怒吼)">
+                  <span class="stamp-icon">🗣️</span><span class="stamp-name">吶喊</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="💢" data-name="怒火" title="💢 怒火 (爆筋/忍無可忍)">
+                  <span class="stamp-icon">💢</span><span class="stamp-name">怒火</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="💔" data-name="心痛" title="💔 心痛 (心碎/胸口壓迫刺痛)">
+                  <span class="stamp-icon">💔</span><span class="stamp-name">心痛</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🔥" data-name="灼熱" title="🔥 灼熱 (心火燥熱/火燒)">
+                  <span class="stamp-icon">🔥</span><span class="stamp-name">灼熱</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🌀" data-name="緊繃" title="🌀 緊繃 (肩頸打結/念頭漩渦)">
+                  <span class="stamp-icon">🌀</span><span class="stamp-name">緊繃</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🪨" data-name="沉重" title="🪨 沉重 (千斤巨石/肩膀重擔)">
+                  <span class="stamp-icon">🪨</span><span class="stamp-name">沉重</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="👊" data-name="握拳" title="👊 握拳 (拳頭緊握/防衛對立)">
+                  <span class="stamp-icon">👊</span><span class="stamp-name">握拳</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="〰️" data-name="顫抖" title="〰️ 顫抖 (手抖/腿軟/戰慄)">
+                  <span class="stamp-icon">〰️</span><span class="stamp-name">顫抖</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="💧" data-name="冒汗" title="💧 冒汗 (冷汗直流/委屈眼淚)">
+                  <span class="stamp-icon">💧</span><span class="stamp-name">冒汗</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🥶" data-name="發冷" title="🥶 發冷 (手腳冰冷/恐懼緊縮)">
+                  <span class="stamp-icon">🥶</span><span class="stamp-name">發冷</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🌪️" data-name="混亂" title="🌪️ 混亂 (思緒風暴/胡思亂想)">
+                  <span class="stamp-icon">🌪️</span><span class="stamp-name">混亂</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="🌸" data-name="落地" title="🌸 落地 (深呼吸/落地放鬆)">
+                  <span class="stamp-icon">🌸</span><span class="stamp-name">落地</span>
+                </button>
+                <button class="doodle-stamp-btn" data-icon="☀️" data-name="溫暖" title="☀️ 溫暖 (覺察陽光/照亮接納)">
+                  <span class="stamp-icon">☀️</span><span class="stamp-name">溫暖</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Canvas Bottom Quick Toolbar -->
-            <div class="doodle-toolbar">
-              <!-- Row 1: Brush mode, Eraser, Undo, Clear, Save -->
+            <div class="doodle-toolbar" style="margin-top: 10px;">
+              <!-- Row 1: Brush mode, Eraser, Insert Human, Undo, Clear, Save, Share -->
               <div class="doodle-tool-row">
                 <div class="doodle-btn-group">
-                  <button id="tool-pen" class="tool-btn active" title="畫筆">🖌️ 畫筆</button>
+                  <button id="tool-pen" class="tool-btn active" title="畫筆模式（自由畫線、寫字、標註）">🖌️ 畫筆</button>
                   <button id="tool-eraser" class="tool-btn" title="橡皮擦">🧹 橡皮擦</button>
+                  <button id="tool-insert-human" class="tool-btn" style="color: #7c3aed; font-weight: 600;" title="在當前畫布疊加身心人型輪廓">👤 放入人型</button>
                   <button id="tool-undo" class="tool-btn" title="復原">↩️ 復原</button>
                   <button id="tool-clear" class="tool-btn" title="清空畫布">🗑️ 清空</button>
                 </div>
@@ -308,7 +370,7 @@
 
               <!-- Row 2: Brush Size & Dynamic Preview -->
               <div class="doodle-slider-row">
-                <span style="font-size: 12px; color: var(--text-sub); white-space: nowrap;">筆觸粗細</span>
+                <span style="font-size: 12px; color: var(--text-sub); white-space: nowrap;">筆觸/圖示大小</span>
                 <input type="range" id="doodle-brush-size" min="2" max="36" value="6" class="neumo-slider" style="flex: 1;">
                 <span id="brush-size-preview" class="brush-size-dot" style="width: 6px; height: 6px; background: #8b5cf6;"></span>
               </div>
@@ -333,114 +395,19 @@
 
               <!-- Row 4: Background style selector -->
               <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 4px; padding-top: 8px; border-top: 1px dashed rgba(220, 215, 245, 0.7);">
-                <span style="font-size: 11.5px; color: var(--text-muted);">畫紙底色：</span>
-                <div style="display: flex; gap: 6px;">
-                  <button class="bg-opt-btn active" data-bg="#ffffff">純白紙</button>
+                <span style="font-size: 11.5px; color: var(--text-muted);">畫紙底圖：</span>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <button class="bg-opt-btn active" data-bg="human">👤 身心人型</button>
+                  <button class="bg-opt-btn" data-bg="#ffffff">純白紙</button>
+                  <button class="bg-opt-btn" data-bg="grid">格點本</button>
                   <button class="bg-opt-btn" data-bg="#fbf9f4">暖米紙</button>
                   <button class="bg-opt-btn" data-bg="#1e1b2e">星空黑</button>
-                  <button class="bg-opt-btn" data-bg="grid">格點本</button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Section: 上網找相似 (Online Visual Search & Google Lens) -->
-          <div class="stats-card" id="search-similar-card" style="margin-top: 16px;">
-            <div class="stats-card-title" style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size: 15px; font-weight: 700; color: #433c6e;">🔍 上網找相似圖片 (以圖搜圖)</span>
-              <span class="badge" style="background:#f3e8ff; color:#7c3aed; font-size:11px; padding:3px 8px; border-radius:8px;">Google 智慧鏡頭</span>
-            </div>
-            <p style="font-size: 13px; color: var(--text-sub); margin: 6px 0 12px; line-height: 1.5;">
-              將當前塗鴉或照片傳送到網路上搜尋相似圖像、意象或藝術作品，探索更多心靈共鳴：
-            </p>
 
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <button id="btn-search-google-lens" class="btn-primary" style="height: 48px; background: linear-gradient(135deg, #7c3aed, #4f46e5); font-size: 14.5px;">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 12 12 16 16 12 12 8"></polygon></svg>
-                Google 智慧鏡頭 (Lens) 搜尋相似圖
-              </button>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button id="btn-search-bing" class="record-action-btn" style="height: 42px; font-size: 13px; justify-content: center;">
-                  🌐 Bing 視覺搜尋
-                </button>
-                <button id="btn-share-image" class="record-action-btn" style="height: 42px; font-size: 13px; justify-content: center; color: #5865f2; border-color: #5865f2;">
-                  📤 系統分享搜圖
-                </button>
-              </div>
-
-              <div style="background: #f4f2fb; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #5a5382; line-height: 1.6;">
-                💡 <b>使用小提示：</b><br>
-                1. 點擊按鈕時，App 會自動將畫作<b>複製到剪貼簿</b>並下載一份檔案至硬碟。<br>
-                2. 跳轉到 Google 智慧鏡頭頁面後，電腦可直接按 <b>Ctrl+V</b> 貼上；手機可直接選取剛下載的圖片即可比對！
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: 深度比對工作台 (Image Similarity & Visual Comparator) -->
-          <div class="stats-card" id="compare-studio-card" style="margin-top: 16px;">
-            <div class="stats-card-title" style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size: 15px; font-weight: 700; color: #433c6e;">⚖️ 視覺相似度比對工作台</span>
-              <span class="badge" style="background:#e0f2fe; color:#0284c7; font-size:11px; padding:3px 8px; border-radius:8px;">比對模式</span>
-            </div>
-            <p style="font-size: 13px; color: var(--text-sub); margin: 6px 0 12px; line-height: 1.5;">
-              將您的塗鴉/照片與網路參考圖或意象進行「輪廓結構」與「色彩分佈」深度比對：
-            </p>
-
-            <!-- Reference Image Selector -->
-            <div style="margin-bottom: 12px;">
-              <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                <input type="text" id="compare-url-input" class="neumo-input" placeholder="貼上網路圖片網址 (https://...) 或選擇下方意象" style="flex:1; height:38px; font-size:12.5px;">
-                <button id="btn-load-compare-url" class="btn-primary" style="height:38px; padding:0 12px; font-size:12px; white-space:nowrap;">載入網址</button>
-                <button id="btn-upload-compare-ref" class="record-action-btn" style="height:38px; padding:0 10px; font-size:12px; white-space:nowrap;">📁 本機選圖</button>
-                <input type="file" id="compare-ref-file-input" accept="image/*" style="display:none;">
-              </div>
-
-              <!-- Curated Archetype Imagery Quick Chips -->
-              <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 6px;">或點選精選心靈意象進行對照：</div>
-              <div class="compare-archetypes-row" id="compare-archetypes-chips">
-                <button class="archetype-chip active" data-key="lake">🌊 寧靜澄澈湖泊</button>
-                <button class="archetype-chip" data-key="storm">⛈️ 狂風巨浪海嘯</button>
-                <button class="archetype-chip" data-key="sun">🌅 破曉晨曦朝陽</button>
-                <button class="archetype-chip" data-key="forest">🌲 迷霧深處原野</button>
-                <button class="archetype-chip" data-key="flower">🌻 綻放向日葵田</button>
-                <button class="archetype-chip" data-key="tree">🪨 挺立磐石孤松</button>
-              </div>
-            </div>
-
-            <!-- Comparison Mode Toggles -->
-            <div class="mode-toggle-bar" style="margin-bottom: 12px;">
-              <div class="mode-toggle-btn active" id="btn-comp-mode-curtain" data-comp="curtain">滑簾窗簾比對</div>
-              <div class="mode-toggle-btn" id="btn-comp-mode-side" data-comp="side">左右雙圖對照</div>
-              <div class="mode-toggle-btn" id="btn-comp-mode-overlay" data-comp="overlay">透明疊加比對</div>
-            </div>
-
-            <!-- Visual Comparison Viewport Container -->
-            <div id="compare-viewport-container" class="compare-viewport">
-              <!-- Dynamically populated comparison views -->
-            </div>
-
-            <!-- Comparison Metric Score Board -->
-            <div id="compare-score-board" class="compare-score-board" style="display: block; margin-top: 14px;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align: center;">
-                <div class="score-metric-box">
-                  <div class="score-num" id="metric-overall" style="color: #7c3aed;">--%</div>
-                  <div class="score-label">綜合相似度</div>
-                </div>
-                <div class="score-metric-box">
-                  <div class="score-num" id="metric-structure" style="color: #0284c7;">--%</div>
-                  <div class="score-label">輪廓結構相似</div>
-                </div>
-                <div class="score-metric-box">
-                  <div class="score-num" id="metric-color" style="color: #10b981;">--%</div>
-                  <div class="score-label">色彩色調相似</div>
-                </div>
-              </div>
-              <div id="compare-insight-box" class="compare-insight-text">
-                正在分析塗鴉與對照圖的視覺特徵...
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

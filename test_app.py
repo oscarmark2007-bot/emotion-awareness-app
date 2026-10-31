@@ -207,16 +207,35 @@ def run_tests():
             assert canvas.is_visible(), "塗鴉畫布應正常顯示"
             log_test("7-1", "心靈塗鴉畫布 (Canvas) 載入正常")
     
-            # 畫筆與顏色切換
-            page.locator(".color-dot[data-color='#f97316']").click()
+            # 7-2. 身心人型輪廓與小 Icon 蓋章標註 (User Request: 畫一個人型 放入心靈塗鴉 列一些小icon 使用者可選用)
+            icon_tray = page.locator("#doodle-icon-tray")
+            assert icon_tray.is_visible(), "身心覺察小 Icon 貼圖列應可見"
+            heart_icon = page.locator('.doodle-stamp-btn[data-icon="💔"]')
+            assert heart_icon.is_visible(), "心痛小 Icon 應在選單中"
+            heart_icon.click()
+            time.sleep(0.2)
             cbox = canvas.bounding_box()
-            page.mouse.move(cbox["x"] + 100, cbox["y"] + 100)
-            page.mouse.down()
-            page.mouse.move(cbox["x"] + 200, cbox["y"] + 200)
-            page.mouse.up()
-            log_test("7-2", "自己畫：觸控/滑鼠塗鴉、色彩盤切換驗證成功")
+            # 點擊人型胸口位置蓋印 💔 印章
+            page.mouse.click(cbox["x"] + cbox["width"] / 2, cbox["y"] + cbox["height"] * 0.35)
+            time.sleep(0.2)
+            # 再點擊頭部位置蓋印 ⚡ 閃電
+            lightning_icon = page.locator('.doodle-stamp-btn[data-icon="⚡"]')
+            lightning_icon.click()
+            time.sleep(0.2)
+            page.mouse.click(cbox["x"] + cbox["width"] / 2, cbox["y"] + cbox["height"] * 0.15)
+            time.sleep(0.2)
+            log_test("7-2", "身心人型圖 + 覺察小 Icon (💔心痛、⚡閃電) 蓋章標註驗證成功")
 
-            # 7-3. 塗鴉畫布一鍵多管道分享檢驗 (Doodle Share Modal)
+            # 7-3. 自行畫模式 (User Request: or 自行畫)
+            page.locator("#tool-pen").click()
+            page.locator(".color-dot[data-color='#f97316']").click()
+            page.mouse.move(cbox["x"] + 80, cbox["y"] + 120)
+            page.mouse.down()
+            page.mouse.move(cbox["x"] + 150, cbox["y"] + 180)
+            page.mouse.up()
+            log_test("7-3", "自行畫：手指/滑鼠塗鴉、色彩盤切換驗證成功")
+
+            # 7-4. 塗鴉畫布一鍵多管道分享檢驗 (Doodle Share Modal)
             page.locator("#btn-doodle-share").click()
             time.sleep(0.5)
             share_modal = page.locator("#general-modal")
@@ -229,12 +248,12 @@ def run_tests():
             page.screenshot(path=os.path.join(SCREENSHOT_DIR, "11_doodle_share_modal.png"))
             page.locator(".modal-close-btn").click()
             time.sleep(0.3)
-            log_test("7-3", "塗鴉畫布一鍵多管道分享 (手機系統分享 / 剪貼簿 / Discord / 下載) 驗證成功")
+            log_test("7-4", "塗鴉畫布一鍵多管道分享 (手機系統分享 / 剪貼簿 / Discord / 下載) 驗證成功")
 
-            # 7-4. 帶入觀察表
+            # 7-5. 帶入觀察表
             page.locator("#btn-doodle-to-draft").click()
             time.sleep(0.4)
-            log_test("7-4", "「帶入記錄」按鈕成功將塗鴉壓縮轉存為觀察表記錄附件")
+            log_test("7-5", "「帶入記錄」按鈕成功將塗鴉壓縮轉存為觀察表記錄附件")
 
             # 8. 操作手冊彈出檢驗
             page.locator("#btn-header-manual").click()
